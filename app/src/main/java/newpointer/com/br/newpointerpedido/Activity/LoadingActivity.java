@@ -324,6 +324,7 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                                 dbl.insertConfig(nStringBD, nStringEst, nTaxa, nDigitoVerif, nPerguntaMesa, nTitle, nMin, nMax, "", selecModo, selecProd);
                                 final TestaConn tc = new TestaConn();
                                 tc.execute();
+                                //Timeout
                                 new CountDownTimer(10000, 1000){
 
                                     @Override

@@ -1,2 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
+
+    <item
+        jar="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="c2c594cace5d83a3227b2b6e658ecbfd586d3ed9">
+        <dex dex="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/pre-dexed/debug/com.android.support-support-vector-drawable-23.4.0_700c734da602b59c161d00452302424087b79c4d.jar" />
+    </item>
+    <item
+        jar="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/exploded-aar/com.android.support/design/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="5326d9a850d491714fef8cbfaa9ea3416f0bf0d2">
+        <dex dex="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/pre-dexed/debug/com.android.support-design-23.4.0_a75b3b94730c02e4198421441b83837b6a6545a0.jar" />
+    </item>
+    <item
+        jar="/Users/felipersn/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.4.0/support-annotations-23.4.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="ffbe55fdb2bb456b1485831706a9eac3300bb6b8">
+        <dex dex="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/pre-dexed/debug/support-annotations-23.4.0_79b89b40a3d58a4f5e8961aa4637dcfb53ef67ab.jar" />
+    </item>
+    <item
+        jar="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="ec75036c3c52e451d0cde50a5aedaf5fd32354a0">
+        <dex dex="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/pre-dexed/debug/com.android.support-recyclerview-v7-23.4.0_1e6105d09387a03c32203f3f34ea0c7079e66bd4.jar" />
+    </item>
+    <item
+        jar="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/libs/android-viewbadger.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="f1303b50d535716ca7601c5014357b8435658313">
+        <dex dex="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/pre-dexed/debug/android-viewbadger_b798b496f08cda598b097f1b33ae30ba7d2d456e.jar" />
+    </item>
+    <item
+        jar="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/libs/Jaybird2_2_4.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="a46645ea8656ad25648300e8410b5a73ff3448ec">
+        <dex dex="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/pre-dexed/debug/Jaybird2_2_4_d474fb79953774081eee3b4ec9740a0b2b95cc81.jar" />
+    </item>
+    <item
+        jar="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.4.0/jars/libs/internal_impl-23.4.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="ea3c07504d2c8f4b13aa17c45c1b68ed9c1c3674">
+        <dex dex="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/pre-dexed/debug/internal_impl-23.4.0_b55f24d65e1783eb8b9cceee7e8202749a22947d.jar" />
+    </item>
+    <item
+        jar="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/exploded-aar/com.android.support/cardview-v7/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="d9ecde39b460470e655de6e47c05573d2d5a8bfb">
+        <dex dex="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/pre-dexed/debug/com.android.support-cardview-v7-23.4.0_d3e13b5d2b8bdaeae3634d360e11835f65f972ee.jar" />
+    </item>
+    <item
+        jar="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="548f06de403a9409f00554b3ee12a9fdea0e236c">
+        <dex dex="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-23.4.0_8778708506374127b145423ef302849fbbf9b3c7.jar" />
+    </item>
+    <item
+        jar="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="67bd36ee9340ec7c254108936ad16b24bed160cc">
+        <dex dex="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-23.4.0_c2951ad3eeae931249c38e86ef6159a8e1cf1bd1.jar" />
+    </item>
+    <item
+        jar="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="de4db3785756bfb0915a9f59a9b3f2fea7407be4">
+        <dex dex="/Users/felipersn/Project/NewPointer/NewPointer-Pedido/app/build/intermediates/pre-dexed/debug/com.android.support-animated-vector-drawable-23.4.0_98fc15e3d617568decee3fe2a1e75b0354c1040c.jar" />
+    </item>
+
+</items>
