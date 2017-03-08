@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="@color/colorPrimary"
-        android:elevation="8dp">
+        android:elevation="6dp">
 
         <TextView
             android:id="@+id/tv_main_comanda"
@@ -62,7 +62,7 @@
         android:layout_below="@id/tb_main"
         android:background="@drawable/border_radius"
         android:layout_margin="10dp"
-        android:elevation="8dp">
+        android:elevation="4dp">
 
         <EditText
             android:id="@+id/et_main_descprod"
@@ -101,7 +101,7 @@
             android:layout_height="?android:attr/actionBarSize"
             android:background="@drawable/border_radius_2"
             android:layout_margin="10dp"
-            android:elevation="8dp">
+            android:elevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -346,12 +346,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/actionBarSize">
 
+                <ImageView
+                    android:id="@+id/iv_main_scan"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:padding="10dp"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:src="@drawable/barcode_scan"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
                 <TextView
                     android:id="@+id/tv_main_nprod"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/iv_main_scan"
                     android:textSize="20sp"
                     android:textColor="@color/colorPrimary"
                     android:textStyle="bold"
@@ -373,10 +385,11 @@
                 <ImageButton
                     android:id="@+id/ib_main_backspace"
                     android:layout_width="60dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="60dp"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentBottom="true"
                     android:src="@drawable/backspace_colored"
+                    android:foreground="?android:attr/selectableItemBackground"
                     style="?android:attr/borderlessButtonStyle"/>
 
                 <View
@@ -386,6 +399,7 @@
                     android:layout_toLeftOf="@+id/ib_main_backspace"
                     android:layout_marginTop="-15dp"
                     android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/iv_main_scan"
                     android:layout_marginRight="10dp"
                     android:background="#e0035c8c"/>
 
@@ -662,6 +676,5 @@
         </RelativeLayout>
 
     </RelativeLayout>
-
 
 </RelativeLayout>

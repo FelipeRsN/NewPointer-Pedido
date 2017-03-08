@@ -114,7 +114,7 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                 }else{
                     prog.setProgress(progress);
                 }
-                status_system.setText("Verificando conexão... 10");
+                status_system.setText("Verificando conexão... 15");
                 new CountDownTimer(300,1000) {
                     @Override
                     public void onTick(long millis) {
@@ -176,17 +176,19 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                             string_ip = dbl.selectConfig().getString_bd().toString();
                             final TestaConn tc = new TestaConn();
                             tc.execute();
-                            new CountDownTimer(10000, 1000){
+                            new CountDownTimer(15000, 1000){
 
                                 @Override
                                 public void onTick(long millisUntilFinished) {
-                                    status_system.setText("Verificando conexão... "+millisUntilFinished/1000);
+                                    if(!hasResult) {
+                                        status_system.setText("Verificando conexão... " + millisUntilFinished / 1000);
+                                    }
                                 }
 
                                 @Override
                                 public void onFinish() {
-                                    status_system.setText("Verificando conexão... 0");
                                     if(!hasResult){
+                                        status_system.setText("Verificando conexão... 0");
                                         tc.cancel(true);
                                         if(dbl.haveProd() && dbl.haveFam()){
                                             tv_date.setText("Data da última atualização: "+dbl.selectConfig().getDbbkp_date());
@@ -293,7 +295,7 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                         prog_circle.setVisibility(View.VISIBLE);
                         ll_form.setVisibility(View.INVISIBLE);
                         next.setVisibility(View.INVISIBLE);
-                        status_system.setText("Verificando conexão... 10");
+                        status_system.setText("Verificando conexão... 15");
                         progress = progressSave;
                         prog.setProgress(progress);
                         new CountDownTimer(300,1000) {
@@ -329,13 +331,15 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
 
                                     @Override
                                     public void onTick(long millisUntilFinished) {
-                                        status_system.setText("Verificando conexão... "+millisUntilFinished/1000);
+                                        if(!hasResult) {
+                                            status_system.setText("Verificando conexão... " + millisUntilFinished / 1000);
+                                        }
                                     }
 
                                     @Override
                                     public void onFinish() {
-                                        status_system.setText("Verificando conexão... 0");
                                         if(!hasResult){
+                                            status_system.setText("Verificando conexão... 0");
                                             tc.cancel(true);
                                             if(dbl.haveProd() && dbl.haveFam()){
                                                 tv_date.setText("Data da última atualização: "+dbl.selectConfig().getDbbkp_date());
@@ -492,30 +496,23 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected Integer doInBackground(String... bt) {
-            Log.i("TESTE","TESTE DE CONEXAO");
             try{
                 Class.forName("org.firebirdsql.jdbc.FBDriver");
-                Log.i("TESTE","class");
             }catch(Exception e){
                 System.err.println(e.getMessage());
-                Log.i("TESTE","error");
             }
             try{
                 Properties props = new Properties();
                 props.setProperty("user", "POINTER");
                 props.setProperty("password", "sysadmin");
                 props.setProperty("encoding", "WIN1252");
-                Log.i("TESTE","props");
                 Connection conn = DriverManager.getConnection("jdbc:firebirdsql://"+string_ip+"", props);
-                Log.i("TESTE","driver");
                 String sSql = "SELECT CD_CHAVE, VL_CHAVE FROM TAB_PARAM";
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sSql);
                 String aux = "";
-                Log.i("TESTE","CHAMOU A CONEXAO");
                 while (rs.next()){
                     hasResult = true;
-                    Log.i("TESTE","ACHOU RESULT");
                     i++;
                     aux = rs.getString("CD_CHAVE");
                     if(aux.equalsIgnoreCase("TITULO_NR_GERADOR")){
@@ -546,8 +543,8 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         public void onPostExecute(Integer i) {
-            Log.i("TESTE","ONPOST "+i);
             if(i == 1){
+                hasResult = true;
                 status_system.setText("Conexão estabelecida.\nVerificando dados...");
                 new CountDownTimer(300,1000) {
                     @Override
@@ -605,6 +602,7 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                 }.start();
             }
             else {
+                hasResult = true;
                 if(dbl.haveProd() && dbl.haveFam()){
                     tv_date.setText("Data da última atualização: "+dbl.selectConfig().getDbbkp_date());
                     rl_keepdata.setVisibility(View.VISIBLE);
@@ -657,7 +655,9 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                 props.setProperty("password", "sysadmin");
                 props.setProperty("encoding", "WIN1252");
                 Connection conn = DriverManager.getConnection("jdbc:firebirdsql://"+string_ip+"", props);
-                String sSql = "SELECT CD_PRO,DS_PRO,UN_PRO,CDFAM_PRO,FL_IMPREMOTA_PRO,CD_IMPREMOTA_PRO,FL_ACOMPANHAMENTO_PRO,TP_ACOMPANHAMENTO_PRO, FL_HAB_ATALHO_ANDROID_PRO FROM PRODUTO P, FAMILIA F WHERE FL_ATIVO_PRO = 1 AND P.CDFAM_PRO = F.ID_FAM AND F.MOSTRAR_TOUCH_FAM = 1 ORDER BY DS_PRO";
+                String sSql = "SELECT CD_PRO,DS_PRO,UN_PRO,CDFAM_PRO,FL_IMPREMOTA_PRO,CD_IMPREMOTA_PRO,FL_ACOMPANHAMENTO_PRO,TP_ACOMPANHAMENTO_PRO, FL_HAB_ATALHO_ANDROID_PRO " +
+                              "FROM PRODUTO P, FAMILIA F " +
+                              "WHERE FL_ATIVO_PRO = 1 AND P.CDFAM_PRO = F.ID_FAM AND F.MOSTRAR_TOUCH_FAM = 1 AND P.FL_NAOVENDER_PRO <> 1 ORDER BY DS_PRO";
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sSql);
                 while(rs.next())
@@ -780,6 +780,30 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                 while(rs7.next()) {
                     dbl.insertPerfilFuncao(Integer.parseInt(rs7.getString("CD_PERFIL")),rs7.getString("CD_FUNCAO"));
                 }
+                rs7.close();
+
+                //////////////////////////////SELECT CD_PRO,DS_PRO,UN_PRO,CDFAM_PRO,FL_IMPREMOTA_PRO,CD_IMPREMOTA_PRO,FL_ACOMPANHAMENTO_PRO,TP_ACOMPANHAMENTO_PRO, FL_HAB_ATALHO_ANDROID_PRO " +
+                //"FROM PRODUTO P, FAMILIA F " +
+                //"WHERE FL_ATIVO_PRO = 1 AND P.CDFAM_PRO = F.ID_FAM AND F.MOSTRAR_TOUCH_FAM = 1 AND P.FL_NAOVENDER_PRO <> 1 ORDER BY DS_PRO
+                // Log.i("produtos",cd+" | "+rs.getString("DS_PRO")+" | "+cdfam+" | "+rs.getString("UN_PRO")+" | "+flimp+" | "+cdimp+" | "+flaco+" | "+acomp+" | "+atalho);
+//
+//                String sSql8 = "INSERT INTO PRODUTO (CD_PRO, DS_PRO, UN_PRO, CDFAM_PRO, FL_IMPREMOTA_PRO,CD_IMPREMOTA_PRO,FL_ACOMPANHAMENTO_PRO,TP_ACOMPANHAMENTO_PRO,FL_HAB_ATALHO_ANDROID_PRO,FL_NAOVENDER_PRO, FL_ATIVO_PRO)" +
+//                        " VALUES('00885909630998','Agua Com gas garrafa','UN', 3, 1, 3, 0, '', 0, 0, 1)";
+//                stmt.executeUpdate(sSql8);
+//
+
+               // String sSql9 = "UPDATE PRODUTO SET CD_PRO = '07896830106080' WHERE CD_PRO = '00789693010680'";
+//                        //" VALUES('00789693010680','Soro','UN', 3, 0, 0, 0, '', 0, 0, 1)";
+           // stmt.executeUpdate(sSql9);
+
+
+                //String sSql8 = "DELETE FROM PRODUTO WHERE CD_PRO = '07894900531008'";
+               // stmt.executeUpdate(sSql8);
+
+                //7894900531008
+                //07894900531008
+                //07894900531008
+
                 rs7.close();
                 conn.close();
                 stmt.close();

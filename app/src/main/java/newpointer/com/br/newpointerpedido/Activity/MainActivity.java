@@ -1,28 +1,44 @@
 package newpointer.com.br.newpointerpedido.Activity;
 
+import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.util.SparseArray;
+import android.view.KeyEvent;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.edwardvanraak.materialbarcodescanner.MaterialBarcodeScanner;
+import com.edwardvanraak.materialbarcodescanner.MaterialBarcodeScannerBuilder;
+import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.readystatesoftware.viewbadger.BadgeView;
+import com.tonicsystems.jarjar.Main;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import newpointer.com.br.newpointerpedido.Connection.DBLiteConnection;
@@ -35,8 +51,7 @@ import newpointer.com.br.newpointerpedido.Model.FamilyModel;
 import newpointer.com.br.newpointerpedido.Model.ProductModel;
 import newpointer.com.br.newpointerpedido.R;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Intent i;
     private Intent j;
     private TextView tvncomanda;
@@ -84,7 +99,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView status_atalho;
     private String scomanda;
     private String snmesa;
+    private ImageView scanner_click;
     public static Activity fa;
+    private Barcode barcodeResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,15 +111,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startVar();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        scomanda = j.getStringExtra("numeroMesa");;
-        tvncomanda.setText(config.getTitulo_loja()+": "+scomanda);
-        if(config.getPergunta_mesa() == 1){
+        scomanda = j.getStringExtra("numeroMesa");
+        ;
+        tvncomanda.setText(config.getTitulo_loja() + ": " + scomanda);
+        if (config.getPergunta_mesa() == 1) {
             snmesa = j.getStringExtra("mesa");
-            tvnmesa.setText("MESA: "+snmesa);
+            tvnmesa.setText("MESA: " + snmesa);
             tvnmesa.setVisibility(View.VISIBLE);
         }
 
-        if(config.getPhone_selection() == 1){
+        if (config.getPhone_selection() == 1) {
             final float scale = getResources().getDisplayMetrics().density;
             int pixels = (int) (100 * scale + 0.5f);
             bt_0.getLayoutParams().width = pixels;
@@ -140,18 +158,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             bt_9.setTextSize(font);
         }
 
-        switch (config.getProduct_selection()){
-            case 0: bt_atalhos.callOnClick();
-                    break;
-            case 1: bt_pad.callOnClick();
-                    break;
-            case 2: bt_family.callOnClick();
-                    break;
+        switch (config.getProduct_selection()) {
+            case 0:
+                bt_atalhos.callOnClick();
+                break;
+            case 1:
+                bt_pad.callOnClick();
+                break;
+            case 2:
+                bt_family.callOnClick();
+                break;
         }
 
         fm = dbl.selectAllFam();
 
-        FamilyCustomAdapter fca = new FamilyCustomAdapter(MainActivity.this,MainActivity.this,fm);
+        FamilyCustomAdapter fca = new FamilyCustomAdapter(MainActivity.this, MainActivity.this, fm);
         lv_family.setAdapter(fca);
         pb_family.setVisibility(View.INVISIBLE);
         lv_family.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -160,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 pb_family.setVisibility(View.VISIBLE);
                 pm = dbl.selectProdByFam(fm.get(position).getId());
                 tfam.setText(fm.get(position).getName());
-                ProductCustomAdapter pca = new ProductCustomAdapter(MainActivity.this, MainActivity.this,pm);
+                ProductCustomAdapter pca = new ProductCustomAdapter(MainActivity.this, MainActivity.this, pm);
                 lv_prod.setAdapter(pca);
                 return_family.setVisibility(View.VISIBLE);
                 lv_family.setVisibility(View.INVISIBLE);
@@ -172,19 +193,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this,MainActivity.this,pm.get(position),badge);
+                ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, pm.get(position), badge);
                 pdcd.setCanceledOnTouchOutside(false);
                 pdcd.setCancelable(false);
                 pdcd.show();
             }
         });
 
-        if(dbl.foundSelectProdAtalhos()){
+        lv_prod.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                ProductModel p = atalhos.get(position);
+                String tobs = "";
+                dbl.insertProdCarrinho(p.getId(),p.getName(),1,"",tobs);
+                int b = Integer.parseInt(badge.getText().toString());
+                b++;
+                badge.setText(b+"");
+                Toast.makeText(MainActivity.this, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+
+        if (dbl.foundSelectProdAtalhos()) {
             atalhos = dbl.selectProdByAtalho();
-            ProductCustomAdapter pca = new ProductCustomAdapter(MainActivity.this, MainActivity.this,atalhos);
+            ProductCustomAdapter pca = new ProductCustomAdapter(MainActivity.this, MainActivity.this, atalhos);
             lv_atalho.setAdapter(pca);
             pb_atalho.setVisibility(View.INVISIBLE);
-        }else{
+        } else {
             status_atalho.setVisibility(View.VISIBLE);
             pb_atalho.setVisibility(View.INVISIBLE);
         }
@@ -192,16 +227,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lv_atalho.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this,MainActivity.this,atalhos.get(position),badge);
+                ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, atalhos.get(position), badge);
                 pdcd.setCanceledOnTouchOutside(false);
                 pdcd.setCancelable(false);
                 pdcd.show();
             }
         });
+        lv_atalho.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                ProductModel p = atalhos.get(position);
+                String tobs = "";
+                dbl.insertProdCarrinho(p.getId(),p.getName(),1,"",tobs);
+                int b = Integer.parseInt(badge.getText().toString());
+                b++;
+                badge.setText(b+"");
+                Toast.makeText(MainActivity.this, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
 
     }
 
-    private void startVar(){
+    private void startVar() {
         dbl = new DBLiteConnection(MainActivity.this);
         config = dbl.selectConfig();
         tvncomanda = (TextView) findViewById(R.id.tv_main_comanda);
@@ -240,13 +288,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lv_atalho = (ListView) findViewById(R.id.lv_main_atalho);
         rl_atalhos = (RelativeLayout) findViewById(R.id.rl_main_atalho);
         status_atalho = (TextView) findViewById(R.id.tv_main_statusatalho);
+        scanner_click = (ImageView) findViewById(R.id.iv_main_scan);
         badge = new BadgeView(this, carrinho);
         dbl.deleteAllCarrinho();
         badge.setText("0");
         badge.setBadgeBackgroundColor(Color.parseColor("#FFFFFF"));
         badge.setTextColor(Color.parseColor("#035c8c"));
         badge.show();
-
 
 
         bt_0.setOnClickListener(this);
@@ -268,15 +316,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bt_family.setOnClickListener(this);
         carrinho.setOnClickListener(this);
         return_family.setOnClickListener(this);
+        scanner_click.setOnClickListener(this);
 
         i = new Intent();
         j = getIntent();
+
+        auto_search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                bt_search.callOnClick();
+                return true;
+            }
+        });
     }
 
     @Override
-    public void onBackPressed()
-    {
-        if(dbl.haveProdInCarrinho()){
+    public void onBackPressed() {
+        if (dbl.haveProdInCarrinho()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.YourDialogStyle);
             builder.setTitle("Sair do pedido");
             builder.setMessage("Existem produtos pendentes no carrinho, deseja apagar todos os itens e sair?");
@@ -290,15 +346,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             builder.setNegativeButton("Cancelar", null);
             builder.setCancelable(false);
             builder.show();
-        }else{
+        } else {
             finish();
         }
     }
 
     @Override
     public void onClick(View view) {
-        if(view == iv_return){
-            if(dbl.haveProdInCarrinho()){
+        if (view == iv_return) {
+            if (dbl.haveProdInCarrinho()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.YourDialogStyle);
                 builder.setTitle("Sair do pedido");
                 builder.setMessage("Existem produtos pendentes no carrinho, deseja apagar todos os itens e sair?");
@@ -312,26 +368,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 builder.setNegativeButton("Cancelar", null);
                 builder.setCancelable(false);
                 builder.show();
-            }else{
+            } else {
                 finish();
             }
         }
-        if(view == bt_search){
+        if (view == bt_search) {
             String search = auto_search.getText().toString();
             auto_search.setText("");
-            if(dbl.foundSelectProdByName(search)){
+            if (dbl.foundSelectProdByName(search)) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-                ProductPesqCustomDialog ppcd = new ProductPesqCustomDialog(MainActivity.this, MainActivity.this,badge,search);
+                ProductPesqCustomDialog ppcd = new ProductPesqCustomDialog(MainActivity.this, MainActivity.this, badge, search);
                 ppcd.setCancelable(false);
                 ppcd.setCanceledOnTouchOutside(false);
                 ppcd.show();
-            }else{
+            } else {
                 Toast.makeText(MainActivity.this, "Nenhum produto encontrado com este nome", Toast.LENGTH_SHORT).show();
 
             }
 
         }
-        if(view == return_family){
+        if (view == return_family) {
             pb_family.setVisibility(View.VISIBLE);
             lv_prod.setVisibility(View.INVISIBLE);
             lv_prod.setAdapter(null);
@@ -340,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             lv_family.setVisibility(View.VISIBLE);
             pb_family.setVisibility(View.INVISIBLE);
         }
-        if(view == bt_atalhos){
+        if (view == bt_atalhos) {
             view_atalhos.setVisibility(View.VISIBLE);
             view_pad.setVisibility(View.INVISIBLE);
             view_family.setVisibility(View.INVISIBLE);
@@ -352,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             tfam.setText("Famílias");
             return_family.setVisibility(View.INVISIBLE);
         }
-        if(view == bt_pad){
+        if (view == bt_pad) {
             view_pad.setVisibility(View.VISIBLE);
             rl_pad.setVisibility(View.VISIBLE);
             view_family.setVisibility(View.INVISIBLE);
@@ -364,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             tfam.setText("Famílias");
             return_family.setVisibility(View.INVISIBLE);
         }
-        if(view == bt_family){
+        if (view == bt_family) {
             view_family.setVisibility(View.VISIBLE);
             view_pad.setVisibility(View.INVISIBLE);
             view_atalhos.setVisibility(View.INVISIBLE);
@@ -372,105 +428,204 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             rl_family.setVisibility(View.VISIBLE);
             rl_atalhos.setVisibility(View.INVISIBLE);
         }
-        if(view == bt_ok){
-            if(prod_cod.getText().toString().length()>0){
+        if (view == bt_0) {
+            StringCodigo = prod_cod.getText().toString();
+            StringCodigo = StringCodigo + "0";
+            prod_cod.setText(StringCodigo);
+        }
+        if (view == bt_1) {
+            StringCodigo = prod_cod.getText().toString();
+            StringCodigo = StringCodigo + "1";
+            prod_cod.setText(StringCodigo);
+        }
+        if (view == bt_2) {
+            StringCodigo = prod_cod.getText().toString();
+            StringCodigo = StringCodigo + "2";
+            prod_cod.setText(StringCodigo);
+        }
+        if (view == bt_3) {
+            StringCodigo = prod_cod.getText().toString();
+            StringCodigo = StringCodigo + "3";
+            prod_cod.setText(StringCodigo);
+        }
+        if (view == bt_4) {
+            StringCodigo = prod_cod.getText().toString();
+            StringCodigo = StringCodigo + "4";
+            prod_cod.setText(StringCodigo);
+        }
+        if (view == bt_5) {
+            StringCodigo = prod_cod.getText().toString();
+            StringCodigo = StringCodigo + "5";
+            prod_cod.setText(StringCodigo);
+        }
+        if (view == bt_6) {
+            StringCodigo = prod_cod.getText().toString();
+            StringCodigo = StringCodigo + "6";
+            prod_cod.setText(StringCodigo);
+        }
+        if (view == bt_7) {
+            StringCodigo = prod_cod.getText().toString();
+            StringCodigo = StringCodigo + "7";
+            prod_cod.setText(StringCodigo);
+        }
+        if (view == bt_8) {
+            StringCodigo = prod_cod.getText().toString();
+            StringCodigo = StringCodigo + "8";
+            prod_cod.setText(StringCodigo);
+        }
+        if (view == bt_9) {
+            StringCodigo = prod_cod.getText().toString();
+            StringCodigo = StringCodigo + "9";
+            prod_cod.setText(StringCodigo);
+        }
+        if (view == bt_back) {
+            StringCodigo = prod_cod.getText().toString();
+            if (!StringCodigo.isEmpty())
+                StringCodigo = StringCodigo.substring(0, StringCodigo.length() - 1);
+            prod_cod.setText(StringCodigo);
+        }
+        if (view == carrinho) {
+            if (dbl.haveProdInCarrinho()) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+                Intent i = new Intent();
+                i.setClass(MainActivity.this, CarinhoActivity.class);
+                i.putExtra("comanda", scomanda);
+                if (config.getPergunta_mesa() == 1) {
+                    i.putExtra("mesa", snmesa);
+                }
+                startActivity(i);
+            } else {
+                Toast.makeText(MainActivity.this, "Nenhum item adicionado ao carrinho", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (view == scanner_click) {
+            int MyVersion = Build.VERSION.SDK_INT;
+            if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    AlertDialog dialog = new AlertDialog.Builder(this)
+                            .setTitle("Permissão de acesso")
+                            .setMessage("Para usar a camera do dispositivo, é necessário permissão de acesso. Aperte em Permitir para continuar.")
+                            .setPositiveButton("Permitir", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, MaterialBarcodeScanner.RC_HANDLE_CAMERA_PERM);
+                                }
+                            })
+                            .setNegativeButton("Agora não", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(MainActivity.this, "Não é possivel escanerar produtos sem permissão de camera", Toast.LENGTH_LONG).show();
+                                }
+                            }).show();
+                } else {
+                    startScan();
+                }
+            }else{
+                startScan();
+            }
+        }
+        if (view == bt_ok) {
+            if (prod_cod.getText().toString().length() > 0) {
                 String cod_digitado = String.format("%14s", prod_cod.getText().toString()).replace(' ', '0');
+                Log.i("SEARCH", cod_digitado);
                 ProductModel p = dbl.getProdByCode(cod_digitado);
-                if(p.getName().equalsIgnoreCase("")){
+                if (p.getName().equalsIgnoreCase("")) {
                     Toast.makeText(MainActivity.this, "Produto não encontrado", Toast.LENGTH_SHORT).show();
                     prod_cod.setText("");
                     StringCodigo = "";
-                }else{
+                } else {
                     prod_cod.setText("");
                     StringCodigo = "";
                     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-                    ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this,MainActivity.this,p,badge);
+                    ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, p, badge);
                     pdcd.setCanceledOnTouchOutside(false);
                     pdcd.setCancelable(false);
                     pdcd.show();
                 }
-            }else{
-                if(dbl.haveProdInCarrinho()){
+            } else {
+                if (dbl.haveProdInCarrinho()) {
                     Intent i = new Intent();
                     i.setClass(MainActivity.this, CarinhoActivity.class);
-                    i.putExtra("comanda",scomanda);
-                    if(config.getPergunta_mesa() == 1){
-                        i.putExtra("mesa",snmesa);
+                    i.putExtra("comanda", scomanda);
+                    if (config.getPergunta_mesa() == 1) {
+                        i.putExtra("mesa", snmesa);
                     }
                     startActivity(i);
-                }else{
+                } else {
                     Toast.makeText(MainActivity.this, "Nenhum item adicionado ao carrinho", Toast.LENGTH_SHORT).show();
                 }
             }
         }
-        if(view == bt_0){
-            StringCodigo = prod_cod.getText().toString();
-            StringCodigo = StringCodigo+"0";
-            prod_cod.setText(StringCodigo);
+    }
+
+    private void startScan() {
+        /**
+         * Build a new MaterialBarcodeScanner
+         */
+        final MaterialBarcodeScanner materialBarcodeScanner = new MaterialBarcodeScannerBuilder()
+                .withActivity(MainActivity.this)
+                .withEnableAutoFocus(true)
+                .withBleepEnabled(true)
+                .withBackfacingCamera()
+                .withCenterTracker()
+                .withTrackerColor(Color.WHITE)
+                .withText("Procurando código de barras...")
+                .withResultListener(new MaterialBarcodeScanner.OnResultListener() {
+                    @Override
+                    public void onResult(Barcode barcode) {
+                        barcodeResult = barcode;
+                        prod_cod.setText(barcode.rawValue);
+                        String cod_digitado = String.format("%14s", prod_cod.getText().toString()).replace(' ', '0');
+                        Log.i("SEARCH", cod_digitado);
+                        ProductModel p = dbl.getProdByCode(cod_digitado);
+                        if (p.getName().equalsIgnoreCase("")) {
+                            Toast.makeText(MainActivity.this, "Produto não encontrado", Toast.LENGTH_SHORT).show();
+                            prod_cod.setText("");
+                            StringCodigo = "";
+                        } else {
+                            prod_cod.setText("");
+                            StringCodigo = "";
+                            if(p.getUnit().equalsIgnoreCase("UN") && p.getFl_imp() == 0){
+                                String tobs = "";
+                                dbl.insertProdCarrinho(p.getId(),p.getName(),1,"",tobs);
+                                int b = Integer.parseInt(badge.getText().toString());
+                                b++;
+                                badge.setText(b+"");
+                                Toast.makeText(MainActivity.this, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
+                                prod_cod.setText("");
+                            }else {
+                                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+                                ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, p, badge);
+                                pdcd.setCanceledOnTouchOutside(false);
+                                pdcd.setCancelable(false);
+                                pdcd.show();
+                            }
+                        }
+                    }
+                })
+                .build();
+        materialBarcodeScanner.startScan();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != MaterialBarcodeScanner.RC_HANDLE_CAMERA_PERM) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            return;
         }
-        if(view == bt_1){
-            StringCodigo = prod_cod.getText().toString();
-            StringCodigo = StringCodigo+"1";
-            prod_cod.setText(StringCodigo);
+        if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startScan();
+            return;
         }
-        if(view == bt_2){
-            StringCodigo = prod_cod.getText().toString();
-            StringCodigo = StringCodigo+"2";
-            prod_cod.setText(StringCodigo);
-        }
-        if(view == bt_3){
-            StringCodigo = prod_cod.getText().toString();
-            StringCodigo = StringCodigo+"3";
-            prod_cod.setText(StringCodigo);
-        }
-        if(view == bt_4){
-            StringCodigo = prod_cod.getText().toString();
-            StringCodigo = StringCodigo+"4";
-            prod_cod.setText(StringCodigo);
-        }
-        if(view == bt_5){
-            StringCodigo = prod_cod.getText().toString();
-            StringCodigo = StringCodigo+"5";
-            prod_cod.setText(StringCodigo);
-        }
-        if(view == bt_6){
-            StringCodigo = prod_cod.getText().toString();
-            StringCodigo = StringCodigo+"6";
-            prod_cod.setText(StringCodigo);
-        }
-        if(view == bt_7){
-            StringCodigo = prod_cod.getText().toString();
-            StringCodigo = StringCodigo+"7";
-            prod_cod.setText(StringCodigo);
-        }
-        if(view == bt_8){
-            StringCodigo = prod_cod.getText().toString();
-            StringCodigo = StringCodigo+"8";
-            prod_cod.setText(StringCodigo);
-        }
-        if(view == bt_9){
-            StringCodigo = prod_cod.getText().toString();
-            StringCodigo = StringCodigo+"9";
-            prod_cod.setText(StringCodigo);
-        }
-        if(view == bt_back){
-            StringCodigo = prod_cod.getText().toString();
-            if (!StringCodigo.isEmpty()) StringCodigo = StringCodigo.substring(0, StringCodigo.length() - 1);
-            prod_cod.setText(StringCodigo);
-        }
-        if(view == carrinho){
-            if(dbl.haveProdInCarrinho()){
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-                Intent i = new Intent();
-                i.setClass(MainActivity.this, CarinhoActivity.class);
-                i.putExtra("comanda",scomanda);
-                if(config.getPergunta_mesa() == 1){
-                    i.putExtra("mesa",snmesa);
-                }
-                startActivity(i);
-            }else{
-                Toast.makeText(MainActivity.this, "Nenhum item adicionado ao carrinho", Toast.LENGTH_SHORT).show();
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
             }
-        }
+        };
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Error")
+                .setMessage(R.string.no_camera_permission)
+                .setPositiveButton(android.R.string.ok, listener)
+                .show();
     }
 }

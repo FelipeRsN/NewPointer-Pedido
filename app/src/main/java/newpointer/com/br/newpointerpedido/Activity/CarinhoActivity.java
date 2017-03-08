@@ -63,6 +63,7 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
     private String procedure_tpestacao = "1";
 
     private boolean contaAberta = false;
+    private boolean hasResult = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,8 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_carinho);
 
         startVar();
+
+        
 
         j = getIntent();
         comanda = j.getStringExtra("comanda");
@@ -83,6 +86,7 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
         prog.setVisibility(View.INVISIBLE);
 
         badge = MainActivity.badge;
+
     }
 
     private void startVar(){
@@ -108,20 +112,7 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
             builder.setPositiveButton("Concluir", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    pd.setMessage("Testando conexão e enviando produtos...");
-                    pd.setCancelable(false);
-                    pd.setCanceledOnTouchOutside(false);
-                    pd.show();
-                    new CountDownTimer(2000,1000) {
-                        @Override
-                        public void onTick(long millis) {}
-                        @Override
-                        public void onFinish() {
-//                            TestConn tc = new TestConn();
-//                            tc.execute();
-                            new EnviaProdutos().execute();
-                        }
-                    }.start();
+                    enviarProdutos();
                 }
             });
             builder.setNegativeButton("Cancelar", null);
@@ -149,6 +140,41 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
             builder.show();
         }
     }
+
+    private void enviarProdutos(){
+        pd.setMessage("Testando conexão e enviando produtos... 15");
+        pd.setCancelable(false);
+        pd.setCanceledOnTouchOutside(false);
+        pd.show();
+        new EnviaProdutos().execute();
+        new CountDownTimer(15000, 1000){
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                pd.setMessage("Testando conexão e enviando produtos... " + millisUntilFinished / 1000);
+            }
+
+            @Override
+            public void onFinish() {
+                if(!hasResult){
+                    pd.hide();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CarinhoActivity.this, R.style.YourDialogStyle);
+                    builder.setTitle("Problema ao enviar produtos");
+                    builder.setMessage("Ocorreu um problema ao tentar enviar os produtos para o servidor e o tempo se esgotou, verifique sua conexão com a internet e clique em tentar novamente.");
+                    builder.setPositiveButton("Tentar novamente", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            enviarProdutos();
+                        }
+                    });
+                    builder.setNegativeButton("Cancelar", null);
+                    builder.setCancelable(false);
+                    builder.show();
+                }
+            }
+        }.start();
+    }
+
     public class EnviaProdutos extends AsyncTask<String, Object, Integer> {
         private String return_procedure = "";
 
@@ -204,6 +230,7 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
                 ResultSetMetaData rsmd = rs.getMetaData();
                 int columnsNumber = rsmd.getColumnCount();
                 while (rs.next()) {
+                    hasResult = true;
                     for (int i = 1; i <= columnsNumber; i++) {
                         if (i > 1) System.out.print(",  ");
                         String columnValue = rs.getString(i);

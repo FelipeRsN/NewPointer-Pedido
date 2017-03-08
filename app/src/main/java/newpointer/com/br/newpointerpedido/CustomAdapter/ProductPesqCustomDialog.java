@@ -21,6 +21,7 @@ import com.readystatesoftware.viewbadger.BadgeView;
 import java.util.ArrayList;
 import java.util.List;
 
+import newpointer.com.br.newpointerpedido.Activity.MainActivity;
 import newpointer.com.br.newpointerpedido.Connection.DBLiteConnection;
 import newpointer.com.br.newpointerpedido.Model.AcompanhamentoModel;
 import newpointer.com.br.newpointerpedido.Model.GroupAcomp_ListView_Model;
@@ -74,6 +75,21 @@ public class ProductPesqCustomDialog extends Dialog implements View.OnClickListe
                 pdcd.setCanceledOnTouchOutside(false);
                 pdcd.show();
                 dismiss();
+            }
+        });
+
+        lv_prod.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                ProductModel p = prod.get(position);
+                String tobs = "";
+                dbl.insertProdCarrinho(p.getId(),p.getName(),1,"",tobs);
+                int b = Integer.parseInt(badge.getText().toString());
+                b++;
+                badge.setText(b+"");
+                Toast.makeText(act, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
+                dismiss();
+                return true;
             }
         });
 
