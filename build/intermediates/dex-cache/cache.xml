@@ -3,159 +3,6 @@
 
     <item
         is-multidex="true"
-        jar="C:\Users\Felipe Silveira\.android\build-cache\cfeb7fee6948c6b648a7c5fc36681bf92a404b21\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="2f7e6e2dad1bccaf68a8820820adc6c0d5b96d37">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_ec18c050decc1cdc28e8cbf3792d223de82184e8\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Felipe Silveira\.gradle\caches\modules-2\files-2.1\org.greenrobot\eventbus\3.0.0\ddd99896e9569eaababbe81b35d80e1b91c4ad85\eventbus-3.0.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="ddd99896e9569eaababbe81b35d80e1b91c4ad85">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10\eventbus-3.0.0_22a95e8910385da732c2780adf8a3fbf49fd23a2\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="D:\Projects\NewPointer\NewPointer Pedido\app\libs\android-viewbadger.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="f1303b50d535716ca7601c5014357b8435658313">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\2\android-viewbadger_725265f5c99f7e103691a4b58a1a3c9f255d0f49\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="D:\Projects\NewPointer\NewPointer Pedido\app\libs\Jaybird2_2_4.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="a46645ea8656ad25648300e8410b5a73ff3448ec">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\2\Jaybird2_2_4_943f6532c97b43d81027612b70696e08d58e0c2c\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Felipe Silveira\.android\build-cache\2fc67b0afc48dcae770586001f02d813b5905e74\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="5326d9a850d491714fef8cbfaa9ea3416f0bf0d2">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_87a772c0983a03ab3cf8d41a67fffdbfeff5acdf\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Felipe Silveira\.android\build-cache\76513cebea5f73c51c8fe48cbfc74d911856ea14\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="52734af07d103e5251d63f18ff9d88aa94a16425">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_ee08949a8ee155ad85dc0ef10b991fc0d9879fd9\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="D:\Projects\NewPointer\NewPointer Pedido\app\libs\android-viewbadger.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.0"
-        sha1="f1303b50d535716ca7601c5014357b8435658313">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\2\android-viewbadger_725265f5c99f7e103691a4b58a1a3c9f255d0f49\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Felipe Silveira\.android\build-cache\f689b88ee60d97d08b09a14db4138307d5fe365c\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="d9ecde39b460470e655de6e47c05573d2d5a8bfb">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_ee3055af5cf1c0b4996ba2c769a5824e7b11f8ff\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="c82741bc129dd5f99f11a4ab8666ae24262053b6">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_57340107d7cee6575faf17dbb68bfc37eb4d030c\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Felipe Silveira\.android\build-cache\b321770b5dffb8711d2980c8dd02bae244e54be6\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="0874286cc2fd88d54fdf130e9d5372730da6de97">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_4a8a280d48b709331ff9189037d9ea5bcb3a590b\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Felipe Silveira\.android\build-cache\12b0e9a5b9096c48cdfd9d11158d0091dab0c7b6\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="ec75036c3c52e451d0cde50a5aedaf5fd32354a0">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_f8473fddd001f99e0f9f1b1b006eaa78ad30bfbd\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Felipe Silveira\.android\build-cache\81bbaf7109be03e5f0b37a197aad2c5ef4b6c092\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="3bd97cfefd783e9de1dd1c30574a6adb44b4409b">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_7b73f42e1617b56f321d30c269a4d2cc264b1cb7\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Felipe Silveira\.android\build-cache\218aa6d9cc956f839c1a5390447c835e3ac82b33\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="734e80dffea7bd76c18ae256822a124c30d85850">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_15237fdb8c3fc062db6f73458d345d599eb8b5a2\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Felipe Silveira\.android\build-cache\cfeb7fee6948c6b648a7c5fc36681bf92a404b21\output\jars\libs\internal_impl-24.0.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="fcaf463e10e69c1923ccf1edeba3b4196d239e00">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.0.0_c1dcaf4e12c94d16befead7900ac06469745809c\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Felipe Silveira\.android\build-cache\b8b2a69c8f2465eb3ea3d82d09127e4484d9567a\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="b327fbe2fad414bc38cf0ce8f7efe1a38f572837">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_98b24f9370c8718f712c0d4e34524190478191c3\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Felipe Silveira\.android\build-cache\b8b2a69c8f2465eb3ea3d82d09127e4484d9567a\output\jars\libs\internal_impl-24.0.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="b6763651ec29b4c95e7bbe63fc393ffcc8c4c2c5">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.0.0_d7f433cc186f2401e62f8b7afbb5e6a79a3fca03\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Felipe Silveira\.android\build-cache\843498e3f5bf202d09017fe0308afedcd4960b07\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="e70f608219ed6b974644c333249ab2bb7b71de98">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_76925cdde3feeac9ee4ea09774bcb5ce0710aa86\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="D:\Projects\NewPointer\NewPointer Pedido\app\libs\Jaybird2_2_4.jar"
         jumboMode="false"
         optimize="true"
@@ -165,12 +12,12 @@
     </item>
     <item
         is-multidex="true"
-        jar="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
-        jumboMode="true"
+        jar="D:\Projects\NewPointer\NewPointer Pedido\app\libs\android-viewbadger.jar"
+        jumboMode="false"
         optimize="true"
         revision="25.0.0"
-        sha1="46ab0c6618661d60756f1503477231cf1879af07">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_06575efe764a7a3b4876a95f865d04d669ea0f51\classes.dex" />
+        sha1="f1303b50d535716ca7601c5014357b8435658313">
+        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\2\android-viewbadger_725265f5c99f7e103691a4b58a1a3c9f255d0f49\classes.dex" />
     </item>
 
 </items>
