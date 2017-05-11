@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 import com.readystatesoftware.viewbadger.BadgeView;
 
+import org.firebirdsql.jdbc.FBSQLException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -64,6 +66,7 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
 
     private boolean contaAberta = false;
     private boolean hasResult = false;
+    private boolean sqlResponse = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,19 +160,21 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onFinish() {
                 if(!hasResult){
-                    pd.hide();
-                    AlertDialog.Builder builder = new AlertDialog.Builder(CarinhoActivity.this, R.style.YourDialogStyle);
-                    builder.setTitle("Problema ao enviar produtos");
-                    builder.setMessage("Ocorreu um problema ao tentar enviar os produtos para o servidor e o tempo se esgotou, verifique sua conexão com a internet e clique em tentar novamente.");
-                    builder.setPositiveButton("Tentar novamente", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            enviarProdutos();
-                        }
-                    });
-                    builder.setNegativeButton("Cancelar", null);
-                    builder.setCancelable(false);
-                    builder.show();
+                    if(!sqlResponse) {
+                        pd.hide();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(CarinhoActivity.this, R.style.YourDialogStyle);
+                        builder.setTitle("Problema ao enviar produtos");
+                        builder.setMessage("Ocorreu um problema ao tentar enviar os produtos para o servidor e o tempo se esgotou, verifique sua conexão com a internet e clique em tentar novamente.");
+                        builder.setPositiveButton("Tentar novamente", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                enviarProdutos();
+                            }
+                        });
+                        builder.setNegativeButton("Cancelar", null);
+                        builder.setCancelable(false);
+                        builder.show();
+                    }
                 }
             }
         }.start();
@@ -177,6 +182,8 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
 
     public class EnviaProdutos extends AsyncTask<String, Object, Integer> {
         private String return_procedure = "";
+        private boolean isError = false;
+        private String error = "";
 
         @Override
         protected Integer doInBackground(String... bt) {
@@ -247,6 +254,8 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
                 return 1;
             } catch (SQLException e1) {
                 e1.printStackTrace();
+                isError = true;
+                error = e1.toString();
                 return 0;
             }
         }
@@ -283,6 +292,19 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
                                 finish();
                             }
                         });
+                        if(isError){
+                            builder.setNegativeButton("Exibir Erro", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(CarinhoActivity.this, R.style.YourDialogStyle);
+                                    builder.setTitle("Log de erro");
+                                    builder.setMessage(error);
+                                    builder.setPositiveButton("Fechar", null);
+                                    builder.setCancelable(false);
+                                    builder.show();
+                                }
+                            });
+                        }
                         builder.setCancelable(false);
                         builder.show();
                     }else{
@@ -300,6 +322,7 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
             }else{
+                sqlResponse = true;
                 AlertDialog.Builder builder = new AlertDialog.Builder(CarinhoActivity.this, R.style.YourDialogStyle);
                 builder.setTitle("Falha ao conectar-se");
 
@@ -310,6 +333,19 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
                         finish();
                     }
                 });
+                if(isError){
+                    builder.setNegativeButton("Exibir Erro", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(CarinhoActivity.this, R.style.YourDialogStyle);
+                            builder.setTitle("Log de erro");
+                            builder.setMessage(error);
+                            builder.setPositiveButton("Fechar", null);
+                            builder.setCancelable(false);
+                            builder.show();
+                        }
+                    });
+                }
                 builder.setCancelable(false);
                 builder.show();
             }

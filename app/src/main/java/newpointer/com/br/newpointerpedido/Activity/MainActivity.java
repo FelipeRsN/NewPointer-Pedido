@@ -538,6 +538,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     StringCodigo = "";
                     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                     ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, p, badge);
+                    pdcd.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
                     pdcd.setCanceledOnTouchOutside(false);
                     pdcd.setCancelable(false);
                     pdcd.show();

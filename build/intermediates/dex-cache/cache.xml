@@ -3,21 +3,21 @@
 
     <item
         is-multidex="true"
-        jar="D:\Projects\NewPointer\NewPointer Pedido\app\libs\Jaybird2_2_4.jar"
+        jar="E:\My Files\Projects\NewPointer\NewPointer Pedido\app\libs\Jaybird2_2_4.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.0"
         sha1="a46645ea8656ad25648300e8410b5a73ff3448ec">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\2\Jaybird2_2_4_943f6532c97b43d81027612b70696e08d58e0c2c\classes.dex" />
+        <dex dex="E:\My Files\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\2\Jaybird2_2_4_01827356686db3ce18900cc24207a93fd430188b\classes.dex" />
     </item>
     <item
         is-multidex="true"
-        jar="D:\Projects\NewPointer\NewPointer Pedido\app\libs\android-viewbadger.jar"
+        jar="E:\My Files\Projects\NewPointer\NewPointer Pedido\app\libs\android-viewbadger.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.0"
         sha1="f1303b50d535716ca7601c5014357b8435658313">
-        <dex dex="D:\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\2\android-viewbadger_725265f5c99f7e103691a4b58a1a3c9f255d0f49\classes.dex" />
+        <dex dex="E:\My Files\Projects\NewPointer\NewPointer Pedido\app\build\intermediates\transforms\dex\debug\folders\1000\2\android-viewbadger_d145ec6f5dcea06783aae44c49fbc54fc62ef7d7\classes.dex" />
     </item>
 
 </items>

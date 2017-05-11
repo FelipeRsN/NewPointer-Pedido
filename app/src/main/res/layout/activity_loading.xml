@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="V2.7"
+            android:text="V2.8"
             android:textSize="12sp"
             android:textColor="@color/colorWhite"
             android:padding="10dp"/>
