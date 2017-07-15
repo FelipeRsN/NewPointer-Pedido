@@ -528,7 +528,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (prod_cod.getText().toString().length() > 0) {
                 String cod_digitado = String.format("%14s", prod_cod.getText().toString()).replace(' ', '0');
                 Log.i("SEARCH", cod_digitado);
-                ProductModel p = dbl.getProdByCode(cod_digitado);
+                ProductModel p = dbl.getProdByAssociadoAndCode(cod_digitado);
                 if (p.getName().equalsIgnoreCase("")) {
                     Toast.makeText(MainActivity.this, "Produto não encontrado", Toast.LENGTH_SHORT).show();
                     prod_cod.setText("");
@@ -578,7 +578,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         prod_cod.setText(barcode.rawValue);
                         String cod_digitado = String.format("%14s", prod_cod.getText().toString()).replace(' ', '0');
                         Log.i("SEARCH", cod_digitado);
-                        ProductModel p = dbl.getProdByCode(cod_digitado);
+                        ProductModel p = dbl.getProdByAssociadoAndCode(cod_digitado);
                         if (p.getName().equalsIgnoreCase("")) {
                             Toast.makeText(MainActivity.this, "Produto não encontrado", Toast.LENGTH_SHORT).show();
                             prod_cod.setText("");

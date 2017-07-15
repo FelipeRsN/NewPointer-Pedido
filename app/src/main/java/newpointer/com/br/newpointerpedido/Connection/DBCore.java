@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DBCore extends SQLiteOpenHelper {
     private static final String DB_NAME = "PedidoNewPointer";
-    private static final int DB_VERSION = 17;
+    private static final int DB_VERSION = 18;
 
     public DBCore(Context ctx){
         super(ctx, DB_NAME, null, DB_VERSION);
@@ -28,6 +28,7 @@ public class DBCore extends SQLiteOpenHelper {
         db.execSQL("create table operador_funcao(cd_operador integer, cd_funcao text)");
         db.execSQL("create table perfil_funcao(cd_perfil integer, cd_funcao text)");
         db.execSQL("create table current_op(cd_operador integer, nm_operador text)");
+        db.execSQL("create table prod_associado(id_associado text, id_prod text)");
     }
 
     @Override
@@ -43,6 +44,7 @@ public class DBCore extends SQLiteOpenHelper {
         db.execSQL("drop table operador_funcao;");
         db.execSQL("drop table perfil_funcao;");
         db.execSQL("drop table current_op");
+        db.execSQL("drop table prod_associado");
         onCreate(db);
 //
     }

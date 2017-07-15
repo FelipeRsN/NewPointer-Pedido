@@ -192,7 +192,7 @@ public class ProductDetailCustomDialog extends Dialog implements View.OnClickLis
         }
         if(view == add){
             String tobs = "";
-            if(obs.getText().toString().length()>2){
+            if(obs.getText().toString().length()>0){
                 tobs = obs.getText().toString();
             }
             dbl.insertProdCarrinho(prod.getId(),prod.getName(),intquant,AcompCompleto,tobs);

@@ -98,6 +98,7 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
 
         //connection
         //186.202.178.185:3050/c:/fenix/bd/ricco.fdb
+        //191.252.58.113:3050/c:/fenix/bd/fenix.fdb
 
         new CountDownTimer(300,1000) {
             @Override
@@ -483,6 +484,7 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
             dbl.deleteAllOP();
             dbl.deleteAllOPFunc();
             dbl.deleteAllPerfilFunc();
+            dbl.deleteAssociados();
             rl_keepdata.setVisibility(View.INVISIBLE);
             prog_circle.setVisibility(View.VISIBLE);
             status_system.setText("Atualizando dados...");
@@ -655,7 +657,7 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                 props.setProperty("password", "sysadmin");
                 props.setProperty("encoding", "WIN1252");
                 Connection conn = DriverManager.getConnection("jdbc:firebirdsql://"+string_ip+"", props);
-                String sSql = "SELECT CD_PRO,DS_PRO,UN_PRO,CDFAM_PRO,FL_IMPREMOTA_PRO,CD_IMPREMOTA_PRO,FL_ACOMPANHAMENTO_PRO,TP_ACOMPANHAMENTO_PRO, FL_HAB_ATALHO_ANDROID_PRO " +
+                String sSql = "SELECT CD_PRO,DS_PRO, DS_RESUMIDA_PRO,UN_PRO,CDFAM_PRO,FL_IMPREMOTA_PRO,CD_IMPREMOTA_PRO,FL_ACOMPANHAMENTO_PRO,TP_ACOMPANHAMENTO_PRO, FL_HAB_ATALHO_ANDROID_PRO " +
                               "FROM PRODUTO P, FAMILIA F " +
                               "WHERE FL_ATIVO_PRO = 1 AND P.CDFAM_PRO = F.ID_FAM AND F.MOSTRAR_TOUCH_FAM = 1 AND P.FL_NAOVENDER_PRO <> 1 ORDER BY DS_PRO";
                 Statement stmt = conn.createStatement();
@@ -681,7 +683,13 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                     if(rs.getInt("FL_HAB_ATALHO_ANDROID_PRO") == 1){
                         atalho = 1;
                     }
-                    dbl.insertProd(cd, rs.getString("DS_PRO"), cdfam, rs.getString("UN_PRO"), flimp, cdimp, flaco, acomp, atalho);
+                    String ds = rs.getString("DS_RESUMIDA_PRO");
+                    Log.i("DESC", "DS RESUMIDA: "+ds);
+                    if(ds == null || ds.isEmpty() || ds.equalsIgnoreCase("") || ds.equalsIgnoreCase("null")){
+                        ds = rs.getString("DS_PRO");
+                        Log.i("DESC", "NAO TEM DS RESUMIDA, DS: "+ds);
+                    }
+                    dbl.insertProd(cd, ds, cdfam, rs.getString("UN_PRO"), flimp, cdimp, flaco, acomp, atalho);
                     Log.i("produtos",cd+" | "+rs.getString("DS_PRO")+" | "+cdfam+" | "+rs.getString("UN_PRO")+" | "+flimp+" | "+cdimp+" | "+flaco+" | "+acomp+" | "+atalho);
                 }
                 rs.close();
@@ -781,6 +789,16 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                     dbl.insertPerfilFuncao(Integer.parseInt(rs7.getString("CD_PERFIL")),rs7.getString("CD_FUNCAO"));
                 }
                 rs7.close();
+
+                String sSql8 = "SELECT * FROM PRODUTO_ASSOCIADO";
+                ResultSet rs8 = stmt.executeQuery(sSql8);
+                while(rs8.next()) {
+                    Log.i("ASSOCIADOS", "ID_ASSOCIADO: "+rs8.getString("CDPROASSOCIADO_PAS")+" --- CD_PRO: "+rs8.getString("CDPRO_PRINCIPAL_PAS"));
+                    dbl.insertAssociados(rs8.getString("CDPROASSOCIADO_PAS"),rs8.getString("CDPRO_PRINCIPAL_PAS"));
+                }
+                rs8.close();
+
+                dbl.getAllAssociados();
 
                 //////////////////////////////SELECT CD_PRO,DS_PRO,UN_PRO,CDFAM_PRO,FL_IMPREMOTA_PRO,CD_IMPREMOTA_PRO,FL_ACOMPANHAMENTO_PRO,TP_ACOMPANHAMENTO_PRO, FL_HAB_ATALHO_ANDROID_PRO " +
                 //"FROM PRODUTO P, FAMILIA F " +

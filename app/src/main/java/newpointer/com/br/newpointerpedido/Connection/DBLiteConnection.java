@@ -469,4 +469,60 @@ public class DBLiteConnection{
         return null;
     }
 
+    /////////////////////// Associados /////////////////////////
+    ////// insert /////////
+
+    public void insertAssociados(String id, String id_prod) {
+        ContentValues values = new ContentValues();
+        values.put("id_associado", id);
+        values.put("id_prod", id_prod);
+        db.insert("prod_associado", null, values);
+    }
+
+    ////// Delete /////////
+
+    public void deleteAssociados() {
+        db.delete("prod_associado",null, null);
+    }
+
+
+    ////// Select /////////
+
+    public ProductModel getProdByIdAssociado(String id_associado) {
+        Log.i("GETPRODBYID", "Entrou no getByAssociados com o id"+id_associado);
+        String[] columns = new String[]{"id_prod"};
+        Cursor cursor = db.query("prod_associado", columns, "id_associado = '"+id_associado+"'", null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Log.i("GETPRODBYID", "Achou um associado e retornou o codigo de prod "+cursor.getString(0));
+                return getProdByCode(cursor.getString(0));
+            }while(cursor.moveToNext());
+        }
+        Log.i("GETPRODBYID", "Nao achou o associado");
+        return new ProductModel("0","",0,"",0,0,0,"");
+    }
+
+    public ProductModel getProdByAssociadoAndCode(String id){
+        Log.i("GETPRODBYID", "Entrou com ID: "+id);
+        ProductModel p = getProdByCode(id);
+        if (p.getName().equalsIgnoreCase("")) {
+            Log.i("GETPRODBYID", "nao encontrou o prod "+id+" na tabela prod");
+            return getProdByIdAssociado(id);
+        }else{
+            Log.i("GETPRODBYID", "Encontrou o prod na tabela prod e ta retornando");
+            return p;
+        }
+    }
+
+    public void getAllAssociados(){
+        String[] columns = new String[]{"id_associado"};
+        Cursor cursor = db.query("prod_associado", columns, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Log.i("ASSOCIADOS", "getAllAssociados: "+cursor.getString(0));
+            }while(cursor.moveToNext());
+        }
+    }
+
+
 }
