@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import newpointer.com.br.newpointerpedido.Model.FamilyModel;
 import newpointer.com.br.newpointerpedido.Model.ProductModel;
 import newpointer.com.br.newpointerpedido.R;
 

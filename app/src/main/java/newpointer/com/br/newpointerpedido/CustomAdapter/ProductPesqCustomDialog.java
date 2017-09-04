@@ -4,13 +4,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,14 +15,9 @@ import android.widget.Toast;
 
 import com.readystatesoftware.viewbadger.BadgeView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import newpointer.com.br.newpointerpedido.Activity.MainActivity;
 import newpointer.com.br.newpointerpedido.Connection.DBLiteConnection;
-import newpointer.com.br.newpointerpedido.Model.AcompanhamentoModel;
-import newpointer.com.br.newpointerpedido.Model.GroupAcomp_ListView_Model;
-import newpointer.com.br.newpointerpedido.Model.GrupoAcompModel;
 import newpointer.com.br.newpointerpedido.Model.ProductModel;
 import newpointer.com.br.newpointerpedido.R;
 

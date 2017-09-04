@@ -2,28 +2,23 @@ package newpointer.com.br.newpointerpedido.CustomAdapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.readystatesoftware.viewbadger.BadgeView;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import newpointer.com.br.newpointerpedido.Activity.CarinhoActivity;
 import newpointer.com.br.newpointerpedido.Activity.MainActivity;
 import newpointer.com.br.newpointerpedido.Connection.DBLiteConnection;
 import newpointer.com.br.newpointerpedido.Model.CarrinhoModel;
-import newpointer.com.br.newpointerpedido.Model.GroupAcomp_ListView_Model;
 import newpointer.com.br.newpointerpedido.R;
 
 /**
@@ -60,7 +55,7 @@ public class CarrinhoCustomAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(final int i, View view, ViewGroup viewGroup) {
         ViewHolder holder;
         badge = MainActivity.badge;
         if (view == null) {
@@ -99,6 +94,7 @@ public class CarrinhoCustomAdapter extends BaseAdapter {
                 pb.setVisibility(View.VISIBLE);
                 DBLiteConnection dbl = new DBLiteConnection(context);
                 dbl.deleteProdCarrinho(item.getId_carrinho());
+                CarinhoActivity.carrinho.remove(i);
                 int b = Integer.parseInt(badge.getText().toString());
                 b--;
                 badge.setText(""+b);

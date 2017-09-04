@@ -49,6 +49,8 @@ public class MinhaContaActivity extends AppCompatActivity implements View.OnClic
     private ArrayList<Double> vlpro = new ArrayList<Double>();
     private ArrayList<Double> totpro = new ArrayList<Double>();
 
+    private Double totalTaxa = 0.0;
+    private Double totalGeral = 0.0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,19 +111,32 @@ public class MinhaContaActivity extends AppCompatActivity implements View.OnClic
                 while (rs.next()){
                     if(rs.getString("RETORNO").equalsIgnoreCase("OK")){
                         haveConta = true;
-//                        Log.i("Retorno",rs.getString("RETORNO"));
-//                        Log.i("CD_PRODUTO",rs.getString("CD_PRODUTO"));
-//                        Log.i("DS_PRO",rs.getString("DS_PRO"));
-//                        Log.i("QT_CONSUMO",rs.getString("QT_CONSUMO"));
-//                        Log.i("VL_CONSUMO",rs.getString("VL_CONSUMO"));
+                        Log.i("Retorno",rs.getString("RETORNO"));
+                        Log.i("CD_PRODUTO",rs.getString("CD_PRODUTO"));
+                        Log.i("DS_PRO",rs.getString("DS_PRO"));
+                        Log.i("QT_CONSUMO",rs.getString("QT_CONSUMO"));
+                        Log.i("VL_CONSUMO",rs.getString("VL_CONSUMO"));
+                        Log.i("TP_ESTACAO",rs.getString("TP_ESTACAO"));
+                        Log.i("VL_INDICE",rs.getString("VL_INDICE"));
                         Double val_prod = 0.0;
+
                         if(rs.getString("VL_CONSUMO") != null){
                             val_prod = Double.parseDouble(rs.getString("VL_CONSUMO"));
                         }else{
                             val_prod = 0.0;
                         }
                         total = total + val_prod;
-                        prod.add(new ListaProdModel(Long.parseLong(rs.getString("CD_PRODUTO")),rs.getString("DS_PRO"),rs.getString("QT_CONSUMO"), rs.getString("VL_CONSUMO"),Double.parseDouble(rs.getString("VL_CONSUMO"))*Double.parseDouble(rs.getString("QT_CONSUMO"))));
+
+                        try {
+                            if (Integer.parseInt(rs.getString("TP_ESTACAO")) > 0) {
+                                totalTaxa = totalTaxa + (Double.parseDouble(rs.getString("VL_CONSUMO")) * Double.parseDouble(rs.getString("VL_INDICE")));
+                            }
+                        }catch (Exception e){
+                            totalTaxa = total;
+                        }
+
+                        Log.i("INDICE", "doInBackground: "+rs.getString("VL_INDICE")+" - "+rs.getString("TP_ESTACAO"));
+                        prod.add(new ListaProdModel(Long.parseLong(rs.getString("CD_PRODUTO")),rs.getString("DS_PRO"),rs.getString("QT_CONSUMO"), rs.getString("VL_CONSUMO"),Double.parseDouble(rs.getString("VL_CONSUMO")),Integer.parseInt(rs.getString("TP_ESTACAO")), Double.parseDouble(rs.getString("VL_INDICE"))));
                     }else{
                         message = rs.getString("RETORNO");
                     }
@@ -206,10 +221,9 @@ public class MinhaContaActivity extends AppCompatActivity implements View.OnClic
                     NumberFormat formatarFloat = new DecimalFormat("0.00");
                     pb.setVisibility(View.INVISIBLE);
                     tv_conta_prod.setText("R$ "+formatarFloat.format(total));
-                    double tot_taxa = total*dbl.selectConfig().getTaxa();
-                    tv_conta_tax.setText("R$ "+formatarFloat.format(tot_taxa));
-                    double tot_geral = total + tot_taxa;
-                    tv_conta_tot.setText("R$ "+formatarFloat.format(tot_geral));
+                    tv_conta_tax.setText("R$ "+formatarFloat.format(totalTaxa));
+                    tv_conta_tot.setText("R$ "+formatarFloat.format(total+totalTaxa));
+
                 }else{
                     pb.setVisibility(View.INVISIBLE);
                     aviso.setText(message);

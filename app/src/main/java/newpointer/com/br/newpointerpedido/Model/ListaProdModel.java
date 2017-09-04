@@ -9,13 +9,25 @@ public class ListaProdModel {
     private String quant;
     private String val;
     private double tot;
+    private int taxa;
+    private double indice;
 
-    public ListaProdModel(long id, String name, String qtd, String val, double tot){
+    public ListaProdModel(long id, String name, String qtd, String val, double tot, int taxa, double indice){
         this.id = id;
         this.name = name;
         this.quant = qtd;
         this.val = val;
         this.tot = tot;
+        this.taxa = taxa;
+        this.indice = indice;
+    }
+
+    public double getIndice() {
+        return indice;
+    }
+
+    public void setIndice(double indice) {
+        this.indice = indice;
     }
 
     public long getId() {
@@ -56,5 +68,13 @@ public class ListaProdModel {
 
     public void setTot(double tot) {
         this.tot = tot;
+    }
+
+    public int getTaxa() {
+        return taxa;
+    }
+
+    public void setTaxa(int taxa) {
+        this.taxa = taxa;
     }
 }

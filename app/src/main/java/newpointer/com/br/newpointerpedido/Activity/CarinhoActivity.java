@@ -19,8 +19,6 @@ import android.widget.Toast;
 
 import com.readystatesoftware.viewbadger.BadgeView;
 
-import org.firebirdsql.jdbc.FBSQLException;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -43,7 +41,7 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
     private ProgressBar prog;
     private ListView lv_itens;
     private DBLiteConnection dbl;
-    private List<CarrinhoModel> carrinho;
+    public static List<CarrinhoModel> carrinho;
     private BadgeView badge;
     private TextView qtd_itens;
     private ProgressDialog pd;

@@ -14,9 +14,7 @@ import newpointer.com.br.newpointerpedido.Model.ConfigModel;
 import newpointer.com.br.newpointerpedido.Model.CurrentOperadorModel;
 import newpointer.com.br.newpointerpedido.Model.FamilyModel;
 import newpointer.com.br.newpointerpedido.Model.GrupoAcompModel;
-import newpointer.com.br.newpointerpedido.Model.OperadorFuncModel;
 import newpointer.com.br.newpointerpedido.Model.OperadorModel;
-import newpointer.com.br.newpointerpedido.Model.PerfilFuncModel;
 import newpointer.com.br.newpointerpedido.Model.ProductModel;
 
 /**

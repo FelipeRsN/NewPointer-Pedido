@@ -6,14 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import java.util.List;
 
 import newpointer.com.br.newpointerpedido.Model.FamilyModel;
-import newpointer.com.br.newpointerpedido.Model.GroupAcomp_ListView_Model;
 import newpointer.com.br.newpointerpedido.R;
 
 /**

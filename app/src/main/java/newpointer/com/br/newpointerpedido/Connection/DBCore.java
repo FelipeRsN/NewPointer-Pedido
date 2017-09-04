@@ -33,21 +33,34 @@ public class DBCore extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-//        // TODO Auto-generated method stub
-        db.execSQL("drop table config;");
-        db.execSQL("drop table product;");
-        db.execSQL("drop table family;");
-        db.execSQL("drop table groupacomp;");
-        db.execSQL("drop table acomp;");
-        db.execSQL("drop table carrinho;");
-        db.execSQL("drop table operador;");
-        db.execSQL("drop table operador_funcao;");
-        db.execSQL("drop table perfil_funcao;");
-        db.execSQL("drop table current_op");
-        db.execSQL("drop table prod_associado");
+        // TODO Auto-generated method stub
+        db.execSQL("drop table IF EXISTS config;");
+        db.execSQL("drop table IF EXISTS product;");
+        db.execSQL("drop table IF EXISTS family;");
+        db.execSQL("drop table IF EXISTS groupacomp;");
+        db.execSQL("drop table IF EXISTS acomp;");
+        db.execSQL("drop table IF EXISTS carrinho;");
+        db.execSQL("drop table IF EXISTS operador;");
+        db.execSQL("drop table IF EXISTS operador_funcao;");
+        db.execSQL("drop table IF EXISTS perfil_funcao;");
+        db.execSQL("drop table IF EXISTS current_op");
+        db.execSQL("drop table IF EXISTS prod_associado");
         onCreate(db);
-//
     }
-//
-//
+
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("drop table IF EXISTS config;");
+        db.execSQL("drop table IF EXISTS product;");
+        db.execSQL("drop table IF EXISTS family;");
+        db.execSQL("drop table IF EXISTS groupacomp;");
+        db.execSQL("drop table IF EXISTS acomp;");
+        db.execSQL("drop table IF EXISTS carrinho;");
+        db.execSQL("drop table IF EXISTS operador;");
+        db.execSQL("drop table IF EXISTS operador_funcao;");
+        db.execSQL("drop table IF EXISTS perfil_funcao;");
+        db.execSQL("drop table IF EXISTS current_op");
+        db.execSQL("drop table IF EXISTS prod_associado");
+        onCreate(db);
+    }
 }
