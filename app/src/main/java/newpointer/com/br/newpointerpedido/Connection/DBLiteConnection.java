@@ -31,7 +31,7 @@ public class DBLiteConnection{
     /////////////////////// Configuracoes /////////////////////////
     ////// insert /////////
 
-    public void insertConfig(String string_bd, String estacao, Double taxa, int digito_verificador, int pergunta_mesa, String titulo_loja, String nmin_mesa, String nmax_mesa, String bdbkp_date, int phone_selec, int product_selec) {
+    public void insertConfig(String string_bd, String estacao, Double taxa, int digito_verificador, int pergunta_mesa, String titulo_loja, String nmin_mesa, String nmax_mesa, String bdbkp_date, int phone_selec, int product_selec, int preconta, int conferencia) {
         ContentValues values = new ContentValues();
         values.put("db_string", string_bd);
         values.put("estacao", estacao);
@@ -44,6 +44,8 @@ public class DBLiteConnection{
         values.put("dbbkp_date", bdbkp_date);
         values.put("phone_selection", phone_selec);
         values.put("product_selection", product_selec);
+        values.put("preconta", preconta);
+        values.put("conferencia", conferencia);
         db.insert("config", null, values);
     }
 
@@ -56,11 +58,11 @@ public class DBLiteConnection{
     ////// Select /////////
 
     public ConfigModel selectConfig() {
-        String[] columns = new String[]{"db_string", "estacao", "taxa", "digito_verificador", "pergunta_mesa", "titulo_loja", "nmin_mesa", "nmax_mesa","dbbkp_date","phone_selection","product_selection"};
+        String[] columns = new String[]{"db_string", "estacao", "taxa", "digito_verificador", "pergunta_mesa", "titulo_loja", "nmin_mesa", "nmax_mesa","dbbkp_date","phone_selection","product_selection","preconta","conferencia"};
         Cursor cursor = db.query("config", columns, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             do {
-                ConfigModel conf = new ConfigModel(cursor.getString(0), cursor.getString(1), cursor.getDouble(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5), cursor.getString(6), cursor.getString(7), cursor.getString(8), cursor.getInt(9), cursor.getInt(10));
+                ConfigModel conf = new ConfigModel(cursor.getString(0), cursor.getString(1), cursor.getDouble(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5), cursor.getString(6), cursor.getString(7), cursor.getString(8), cursor.getInt(9), cursor.getInt(10),cursor.getInt(11),cursor.getInt(12));
                 return conf;
             }while(cursor.moveToNext());
         }

@@ -15,8 +15,10 @@ public class ConfigModel {
     private String dbbkp_date;
     private int phone_selection;
     private int product_selection;
+    private int preconta;
+    private int conferencia;
 
-    public ConfigModel(String string_bd, String estacao, Double taxa, int digito_verificador, int pergunta_mesa, String titulo_loja, String nmin_mesa, String nmax_mesa, String dbbkp_date, int phone_selection, int product_selection){
+    public ConfigModel(String string_bd, String estacao, Double taxa, int digito_verificador, int pergunta_mesa, String titulo_loja, String nmin_mesa, String nmax_mesa, String dbbkp_date, int phone_selection, int product_selection, int preconta, int conferencia){
         this.string_bd = string_bd;
         this.estacao = estacao;
         this.taxa = taxa;
@@ -28,6 +30,24 @@ public class ConfigModel {
         this.dbbkp_date = dbbkp_date;
         this.phone_selection = phone_selection;
         this.product_selection = product_selection;
+        this.preconta = preconta;
+        this.conferencia = conferencia;
+    }
+
+    public int getPreconta() {
+        return preconta;
+    }
+
+    public void setPreconta(int preconta) {
+        this.preconta = preconta;
+    }
+
+    public int getConferencia() {
+        return conferencia;
+    }
+
+    public void setConferencia(int conferencia) {
+        this.conferencia = conferencia;
     }
 
     public String getString_bd() {

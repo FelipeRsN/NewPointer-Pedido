@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import newpointer.com.br.newpointerpedido.Connection.DBLiteConnection;
+import newpointer.com.br.newpointerpedido.Model.ConfigModel;
 import newpointer.com.br.newpointerpedido.Model.ListaProdModel;
 import newpointer.com.br.newpointerpedido.R;
 
@@ -42,6 +44,7 @@ public class MinhaContaActivity extends AppCompatActivity implements View.OnClic
     private TextView tv_conta_prod;
     private TextView tv_conta_tax;
     private TextView tv_conta_tot;
+    private TextView preconta;
     private ArrayList<ListaProdModel> prod = new ArrayList<ListaProdModel>();
     private ArrayList<Long> cdpro = new ArrayList<Long>();
     private ArrayList<String> dspro = new ArrayList<String>();
@@ -71,7 +74,10 @@ public class MinhaContaActivity extends AppCompatActivity implements View.OnClic
         tv_conta_prod = (TextView) findViewById(R.id.tv_conta_tprod);
         tv_conta_tax = (TextView) findViewById(R.id.tv_conta_tax);
         tv_conta_tot = (TextView) findViewById(R.id.tv_conta_tot);
+        preconta = (TextView) findViewById(R.id.preconta);
         dbl = new DBLiteConnection(MinhaContaActivity.this);
+
+        preconta.setOnClickListener(this);
 
 
         back.setOnClickListener(this);
@@ -79,12 +85,52 @@ public class MinhaContaActivity extends AppCompatActivity implements View.OnClic
         j = getIntent();
         mesa = j.getStringExtra("numeroMesa");
         conta.setText(j.getStringExtra("gerador")+" "+mesa);
+        DBLiteConnection dbl = new DBLiteConnection(this);
+        ConfigModel config = dbl.selectConfig();
+        if(config.getPreconta() == 1) preconta.setVisibility(View.VISIBLE);
+        else preconta.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onClick(View v) {
         if(v == back){
             finish();
+        }
+        if(v == preconta){
+            new GeneratePreConta().execute();
+        }
+    }
+
+    public class GeneratePreConta extends AsyncTask<String,Object,Integer> {
+        @Override
+        protected Integer doInBackground(String... bt) {
+            try{
+                Class.forName("org.firebirdsql.jdbc.FBDriver");
+            }catch(Exception e){
+                System.err.println(e.getMessage());
+            }
+            try{
+                Properties props = new Properties();
+                props.setProperty("user", "POINTER");
+                props.setProperty("password", "sysadmin");
+                props.setProperty("encoding", "WIN1252");
+                Connection conn = DriverManager.getConnection("jdbc:firebirdsql://"+dbl.selectConfig().getString_bd()+"", props);
+                String sSql = "EXECUTE PROCEDURE GERA_IMPRESSAO_PRECONTA_ANDROID("+mesa+")";
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sSql);
+                conn.close();
+                stmt.close();
+                return 1;
+            }
+            catch(SQLException e1){
+                e1.printStackTrace();
+                return 0;
+            }
+        }
+
+        @Override
+        public void onPostExecute(Integer i) {
+            Toast.makeText(MinhaContaActivity.this, "Pedido de pré-conta gerada enviado", Toast.LENGTH_LONG).show();
         }
     }
 

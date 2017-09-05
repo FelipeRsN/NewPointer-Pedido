@@ -324,7 +324,7 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                                 if(digito_verificador.isChecked()) nDigitoVerif = 1;
                                 else nDigitoVerif = 0;
                                 dbl.deleteConfig();
-                                dbl.insertConfig(nStringBD, nStringEst, nTaxa, nDigitoVerif, nPerguntaMesa, nTitle, nMin, nMax, "", selecModo, selecProd);
+                                dbl.insertConfig(nStringBD, nStringEst, nTaxa, nDigitoVerif, nPerguntaMesa, nTitle, nMin, nMax, "", selecModo, selecProd,0,0);
                                 final TestaConn tc = new TestaConn();
                                 tc.execute();
                                 //Timeout
@@ -557,6 +557,7 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                         progress = 70;
                         prog.setProgress(progress);
                         String date = "";
+                        int preconta = 0, conferencia = 0;
                         if(haveConfiguratedNow){
                             nStringBD = string_bd.getText().toString();
                             nStringEst = estacao.getText().toString();
@@ -578,10 +579,12 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                             date = config.getDbbkp_date();
                             selecModo = config.getPhone_selection();
                             selecProd = config.getProduct_selection();
-
+                            preconta = config.getPreconta();
+                            conferencia = config.getConferencia();
                         }
+
                         dbl.deleteConfig();
-                        dbl.insertConfig(nStringBD, nStringEst, nTaxa, nDigitoVerif, nPerguntaMesa, nTitle, nMin, nMax, date, selecModo, selecProd);
+                        dbl.insertConfig(nStringBD, nStringEst, nTaxa, nDigitoVerif, nPerguntaMesa, nTitle, nMin, nMax, date, selecModo, selecProd,preconta,conferencia);
 
                         if(dbl.haveProd() && dbl.haveFam()){
                             tv_date.setText("Data da última atualização: "+dbl.selectConfig().getDbbkp_date());
@@ -857,7 +860,7 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                         Calendar cld = Calendar.getInstance();
                         String date = cld.get(Calendar.DAY_OF_MONTH)+"/"+(cld.get(Calendar.MONTH)+1)+"/"+cld.get(Calendar.YEAR);
                         dbl.deleteConfig();
-                        dbl.insertConfig(config.getString_bd(),config.getEstacao(),config.getTaxa(),config.getDigito_verificador(),config.getPergunta_mesa(),config.getTitulo_loja(),config.getNmin_mesa(),config.getNmax_mesa(),date,config.getPhone_selection(),config.getProduct_selection());
+                        dbl.insertConfig(config.getString_bd(),config.getEstacao(),config.getTaxa(),config.getDigito_verificador(),config.getPergunta_mesa(),config.getTitulo_loja(),config.getNmin_mesa(),config.getNmax_mesa(),date,config.getPhone_selection(),config.getProduct_selection(),config.getPreconta(),config.getConferencia());
                         status_system.setVisibility(View.INVISIBLE);
                         prog_circle.setVisibility(View.INVISIBLE);
                         rl_operador.setVisibility(View.VISIBLE);

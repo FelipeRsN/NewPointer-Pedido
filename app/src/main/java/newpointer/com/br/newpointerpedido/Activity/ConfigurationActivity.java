@@ -26,6 +26,8 @@ public class ConfigurationActivity extends AppCompatActivity implements View.OnC
     private EditText string_bd;
     private EditText taxa;
     private EditText estacao;
+    private Switch preconta;
+    private Switch conferencia;
     private Switch digito_verificador;
     private Switch pergunta_mesa;
     private Button atualizar;
@@ -79,6 +81,11 @@ public class ConfigurationActivity extends AppCompatActivity implements View.OnC
         if(cfg.getPergunta_mesa() == 1)pergunta_mesa.setChecked(true);
         else pergunta_mesa.setChecked(false);
 
+        if(cfg.getPreconta() == 1)preconta.setChecked(true);
+        else digito_verificador.setChecked(false);
+        if(cfg.getConferencia() == 1)conferencia.setChecked(true);
+        else pergunta_mesa.setChecked(false);
+
         busca.setSelection(cfg.getProduct_selection());
 
         modo_op.setSelection(cfg.getPhone_selection());
@@ -96,11 +103,14 @@ public class ConfigurationActivity extends AppCompatActivity implements View.OnC
         estacao = (EditText) findViewById(R.id.et_conf_estacao);
         digito_verificador = (Switch) findViewById(R.id.sw_conf_digito);
         pergunta_mesa = (Switch) findViewById(R.id.sw_conf_mesa);
+        conferencia = (Switch) findViewById(R.id.sw_conf_conferencia);
+        preconta = (Switch) findViewById(R.id.sw_conf_preconta);
         atualizar = (Button) findViewById(R.id.bt_conf_atualizar);
         ib_return = (ImageButton) findViewById(R.id.ib_conf_return);
         busca = (Spinner) findViewById(R.id.sp_conf_prod);
         modo_op = (Spinner) findViewById(R.id.sp_conf_operacao);
         dbl = new DBLiteConnection(ConfigurationActivity.this);
+
 
         atualizar.setOnClickListener(this);
         ib_return.setOnClickListener(this);
@@ -163,12 +173,16 @@ public class ConfigurationActivity extends AppCompatActivity implements View.OnC
                         String nMin = dbl.selectConfig().getNmin_mesa();
                         String nMax = dbl.selectConfig().getNmax_mesa();
                         String title = dbl.selectConfig().getTitulo_loja();
+                        int pc = 0;
+                        int conf = 0;
                         if(pergunta_mesa.isChecked()) bdmesa = 1;
                         if(digito_verificador.isChecked()) bddigito = 1;
+                        if(preconta.isChecked()) pc = 1;
+                        if(conferencia.isChecked()) conf = 1;
                         int selecBusca = busca.getSelectedItemPosition();
                         int selecModo = modo_op.getSelectedItemPosition();
                         dbl.deleteConfig();
-                        dbl.insertConfig(bdconexao,bdestacao,bdtaxa,bddigito,bdmesa,title,nMin,nMax, data, selecModo, selecBusca);
+                        dbl.insertConfig(bdconexao,bdestacao,bdtaxa,bddigito,bdmesa,title,nMin,nMax, data, selecModo, selecBusca, pc, conf);
                         Toast.makeText(ConfigurationActivity.this, "Dados de configuração atualizados com sucesso. Reiniciando sistema...", Toast.LENGTH_SHORT).show();
                         Intent i = getBaseContext().getPackageManager()
                                 .getLaunchIntentForPackage( getBaseContext().getPackageName() );

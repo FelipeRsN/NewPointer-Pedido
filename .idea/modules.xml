@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NewPointer-Pedido.iml" filepath="$PROJECT_DIR$/NewPointer-Pedido.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NewPointerPedido.iml" filepath="$PROJECT_DIR$/NewPointerPedido.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
