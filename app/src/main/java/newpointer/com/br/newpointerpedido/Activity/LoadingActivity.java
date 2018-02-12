@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,6 +33,7 @@ import java.util.Calendar;
 import java.util.Properties;
 
 import newpointer.com.br.newpointerpedido.Connection.DBLiteConnection;
+import newpointer.com.br.newpointerpedido.CustomAdapter.OperadorCustomDialog;
 import newpointer.com.br.newpointerpedido.Model.ConfigModel;
 import newpointer.com.br.newpointerpedido.Model.OperadorModel;
 import newpointer.com.br.newpointerpedido.R;
@@ -287,94 +289,109 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
         bt_ok.setOnClickListener(this);
     }
 
+    public void nextClicked(boolean comeFromDialog){
+        if(!comeFromDialog && dbl.isConfigurated()){
+            OperadorCustomDialog ocd = new OperadorCustomDialog(LoadingActivity.this, LoadingActivity.this, true);
+            ocd.setCanceledOnTouchOutside(false);
+            ocd.setCancelable(false);
+            ocd.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            ocd.show();
+        }else {
+            prog_circle.setVisibility(View.VISIBLE);
+            ll_form.setVisibility(View.INVISIBLE);
+            next.setVisibility(View.INVISIBLE);
+            status_system.setText("Verificando conexão... 15");
+            progress = progressSave;
+            prog.setProgress(progress);
+            new CountDownTimer(300, 1000) {
+                @Override
+                public void onTick(long millis) {
+                }
+
+                @Override
+                public void onFinish() {
+                    progress = 50;
+                    if (Build.VERSION.SDK_INT >= 11) {
+                        ObjectAnimator animation = ObjectAnimator.ofInt(prog, "progress", progress);
+                        animation.setDuration(progressAnimationDuration);
+                        animation.setInterpolator(new DecelerateInterpolator());
+                        animation.start();
+                    } else {
+                        prog.setProgress(progress);
+                    }
+                    string_ip = string_bd.getText().toString();
+                    haveConfiguratedNow = true;
+                    nStringBD = string_bd.getText().toString();
+                    nStringEst = estacao.getText().toString();
+                    nTaxa = Double.parseDouble(taxa.getText().toString());
+                    if (pergunta_pesa.isChecked()) nPerguntaMesa = 1;
+                    else nPerguntaMesa = 0;
+                    if (digito_verificador.isChecked()) nDigitoVerif = 1;
+                    else nDigitoVerif = 0;
+                    dbl.deleteConfig();
+                    dbl.insertConfig(nStringBD, nStringEst, nTaxa, nDigitoVerif, nPerguntaMesa, nTitle, nMin, nMax, "", selecModo, selecProd, 1, 0);
+                    final TestaConn tc = new TestaConn();
+                    tc.execute();
+                    //Timeout
+                    new CountDownTimer(10000, 1000) {
+
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            if (!hasResult) {
+                                status_system.setText("Verificando conexão... " + millisUntilFinished / 1000);
+                            }
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            if (!hasResult) {
+                                status_system.setText("Verificando conexão... 0");
+                                tc.cancel(true);
+                                if (dbl.haveProd() && dbl.haveFam()) {
+                                    tv_date.setText("Data da última atualização: " + dbl.selectConfig().getDbbkp_date());
+                                    rl_keepdata.setVisibility(View.VISIBLE);
+                                    prog_circle.setVisibility(View.INVISIBLE);
+                                } else {
+                                    if (dbl.isConfigurated()) {
+                                        ConfigModel conf = dbl.selectConfig();
+                                        string_bd.setText(conf.getString_bd().toString());
+                                        estacao.setText(conf.getEstacao().toString());
+                                        taxa.setText(conf.getTaxa() + "");
+                                        if (conf.getPergunta_mesa() == 1)
+                                            pergunta_pesa.setChecked(true);
+                                        else pergunta_pesa.setChecked(false);
+                                        if (conf.getDigito_verificador() == 1)
+                                            digito_verificador.setChecked(true);
+                                        else digito_verificador.setChecked(false);
+                                    } else {
+                                        string_bd.setText(nStringBD);
+                                        estacao.setText(nStringEst);
+                                        taxa.setText(nTaxa + "");
+                                        if (nPerguntaMesa == 1) pergunta_pesa.setChecked(true);
+                                        else pergunta_pesa.setChecked(false);
+                                        if (nDigitoVerif == 1) digito_verificador.setChecked(true);
+                                        else digito_verificador.setChecked(false);
+                                    }
+                                    status_system.setText("Falha de conexão.\nVerifique diretório e sinal wi-fi");
+                                    ll_form.setVisibility(View.VISIBLE);
+                                    next.setVisibility(View.VISIBLE);
+                                    prog_circle.setVisibility(View.INVISIBLE);
+                                }
+                            }
+                        }
+                    }.start();
+                }
+            }.start();
+        }
+    }
+
     @Override
     public void onClick(View view) {
         if(view == next){
             if(string_bd.getText().toString().length() > 16){
                 if(estacao.getText().toString().length() > 3){
                     if(taxa.getText().toString().length() > 1){
-                        prog_circle.setVisibility(View.VISIBLE);
-                        ll_form.setVisibility(View.INVISIBLE);
-                        next.setVisibility(View.INVISIBLE);
-                        status_system.setText("Verificando conexão... 15");
-                        progress = progressSave;
-                        prog.setProgress(progress);
-                        new CountDownTimer(300,1000) {
-                            @Override
-                            public void onTick(long millis) {
-                            }
-                            @Override
-                            public void onFinish() {
-                                progress = 50;
-                                if(Build.VERSION.SDK_INT >= 11){
-                                    ObjectAnimator animation = ObjectAnimator.ofInt(prog, "progress", progress);
-                                    animation.setDuration(progressAnimationDuration);
-                                    animation.setInterpolator(new DecelerateInterpolator());
-                                    animation.start();
-                                }else{
-                                    prog.setProgress(progress);
-                                }
-                                string_ip = string_bd.getText().toString();
-                                haveConfiguratedNow = true;
-                                nStringBD = string_bd.getText().toString();
-                                nStringEst = estacao.getText().toString();
-                                nTaxa = Double.parseDouble(taxa.getText().toString());
-                                if(pergunta_pesa.isChecked()) nPerguntaMesa = 1;
-                                else nPerguntaMesa = 0;
-                                if(digito_verificador.isChecked()) nDigitoVerif = 1;
-                                else nDigitoVerif = 0;
-                                dbl.deleteConfig();
-                                dbl.insertConfig(nStringBD, nStringEst, nTaxa, nDigitoVerif, nPerguntaMesa, nTitle, nMin, nMax, "", selecModo, selecProd,0,0);
-                                final TestaConn tc = new TestaConn();
-                                tc.execute();
-                                //Timeout
-                                new CountDownTimer(10000, 1000){
-
-                                    @Override
-                                    public void onTick(long millisUntilFinished) {
-                                        if(!hasResult) {
-                                            status_system.setText("Verificando conexão... " + millisUntilFinished / 1000);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFinish() {
-                                        if(!hasResult){
-                                            status_system.setText("Verificando conexão... 0");
-                                            tc.cancel(true);
-                                            if(dbl.haveProd() && dbl.haveFam()){
-                                                tv_date.setText("Data da última atualização: "+dbl.selectConfig().getDbbkp_date());
-                                                rl_keepdata.setVisibility(View.VISIBLE);
-                                                prog_circle.setVisibility(View.INVISIBLE);
-                                            }else {
-                                                if(dbl.isConfigurated()){
-                                                    ConfigModel conf = dbl.selectConfig();
-                                                    string_bd.setText(conf.getString_bd().toString());
-                                                    estacao.setText(conf.getEstacao().toString());
-                                                    taxa.setText(conf.getTaxa()+"");
-                                                    if(conf.getPergunta_mesa() == 1) pergunta_pesa.setChecked(true);
-                                                    else pergunta_pesa.setChecked(false);
-                                                    if(conf.getDigito_verificador() == 1) digito_verificador.setChecked(true);
-                                                    else digito_verificador.setChecked(false);
-                                                }else{
-                                                    string_bd.setText(nStringBD);
-                                                    estacao.setText(nStringEst);
-                                                    taxa.setText(nTaxa+"");
-                                                    if(nPerguntaMesa == 1) pergunta_pesa.setChecked(true);
-                                                    else pergunta_pesa.setChecked(false);
-                                                    if(nDigitoVerif == 1) digito_verificador.setChecked(true);
-                                                    else digito_verificador.setChecked(false);
-                                                }
-                                                status_system.setText("Falha de conexão.\nVerifique diretório e sinal wi-fi");
-                                                ll_form.setVisibility(View.VISIBLE);
-                                                next.setVisibility(View.VISIBLE);
-                                                prog_circle.setVisibility(View.INVISIBLE);
-                                            }
-                                        }
-                                    }
-                                }.start();
-                            }
-                        }.start();
+                        nextClicked(false);
                     }else{
                         taxa.setError("Campo obrigatório, caso não use taxa digite 0.0");
                     }
@@ -508,6 +525,7 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                 props.setProperty("user", "POINTER");
                 props.setProperty("password", "sysadmin");
                 props.setProperty("encoding", "WIN1252");
+                if(string_ip.contains(" ")) string_ip = string_ip.replace(" ", "");
                 Connection conn = DriverManager.getConnection("jdbc:firebirdsql://"+string_ip+"", props);
                 String sSql = "SELECT CD_CHAVE, VL_CHAVE FROM TAB_PARAM";
                 Statement stmt = conn.createStatement();
