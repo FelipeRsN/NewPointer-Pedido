@@ -50,7 +50,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         titulo.setText(config.getTitulo_loja());
 
 
-        if(config.getPhone_selection() == 1){
+        if(config.getOperacao_selection() == 1){
             final float scale = getResources().getDisplayMetrics().density;
             int pixels = (int) (100 * scale + 0.5f);
             bt_0.getLayoutParams().width = pixels;

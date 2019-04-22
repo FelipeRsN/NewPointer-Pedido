@@ -86,8 +86,8 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
     private String Stringoperador = "";
     private RelativeLayout rl_operador;
     private boolean haveConfiguratedNow = false;
-    private int selecModo;
-    private int selecProd;
+    private int selecOperacao;
+    private int selectBusca;
     public static Context ctx;
 
     @Override
@@ -135,7 +135,7 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                         }
                         string_ip = "";
                         if(dbl.isConfigurated()){
-                            switch (dbl.selectConfig().getPhone_selection()){
+                            switch (dbl.selectConfig().getOperacao_selection()){
                                 case 1: selec.setText("Modo de operação: Tablet");
                                     final float scale = getResources().getDisplayMetrics().density;
                                     int pixels = (int) (100 * scale + 0.5f);
@@ -329,7 +329,7 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                     if (digito_verificador.isChecked()) nDigitoVerif = 1;
                     else nDigitoVerif = 0;
                     dbl.deleteConfig();
-                    dbl.insertConfig(nStringBD, nStringEst, nTaxa, nDigitoVerif, nPerguntaMesa, nTitle, nMin, nMax, "", selecModo, selecProd, 1, 0);
+                    dbl.insertConfig(nStringBD, nStringEst, nTaxa, nDigitoVerif, nPerguntaMesa, nTitle, nMin, nMax, "", selectBusca, selecOperacao, 1, 0);
                     final TestaConn tc = new TestaConn();
                     tc.execute();
                     //Timeout
@@ -585,8 +585,8 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                             if(pergunta_pesa.isChecked()) nPerguntaMesa = 1;
                             else nPerguntaMesa = 0;
                             date = "";
-                            selecModo = 0;
-                            selecProd = 1;
+                            selecOperacao = 0;
+                            selectBusca = 1;
                         }else{
                             ConfigModel config = dbl.selectConfig();
                             nStringBD = config.getString_bd();
@@ -595,14 +595,14 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                             nDigitoVerif = config.getDigito_verificador();
                             nPerguntaMesa = config.getPergunta_mesa();
                             date = config.getDbbkp_date();
-                            selecModo = config.getPhone_selection();
-                            selecProd = config.getProduct_selection();
+                            selectBusca = config.getBusca_selection();
+                            selecOperacao = config.getOperacao_selection();
                             preconta = config.getPreconta();
                             conferencia = config.getConferencia();
                         }
 
                         dbl.deleteConfig();
-                        dbl.insertConfig(nStringBD, nStringEst, nTaxa, nDigitoVerif, nPerguntaMesa, nTitle, nMin, nMax, date, selecModo, selecProd,preconta,conferencia);
+                        dbl.insertConfig(nStringBD, nStringEst, nTaxa, nDigitoVerif, nPerguntaMesa, nTitle, nMin, nMax, date, selectBusca, selecOperacao,preconta,conferencia);
 
                         if(dbl.haveProd() && dbl.haveFam()){
                             tv_date.setText("Data da última atualização: "+dbl.selectConfig().getDbbkp_date());
@@ -878,7 +878,7 @@ public class LoadingActivity extends AppCompatActivity implements View.OnClickLi
                         Calendar cld = Calendar.getInstance();
                         String date = cld.get(Calendar.DAY_OF_MONTH)+"/"+(cld.get(Calendar.MONTH)+1)+"/"+cld.get(Calendar.YEAR);
                         dbl.deleteConfig();
-                        dbl.insertConfig(config.getString_bd(),config.getEstacao(),config.getTaxa(),config.getDigito_verificador(),config.getPergunta_mesa(),config.getTitulo_loja(),config.getNmin_mesa(),config.getNmax_mesa(),date,config.getPhone_selection(),config.getProduct_selection(),config.getPreconta(),config.getConferencia());
+                        dbl.insertConfig(config.getString_bd(),config.getEstacao(),config.getTaxa(),config.getDigito_verificador(),config.getPergunta_mesa(),config.getTitulo_loja(),config.getNmin_mesa(),config.getNmax_mesa(),date,config.getBusca_selection(),config.getOperacao_selection(),config.getPreconta(),config.getConferencia());
                         status_system.setVisibility(View.INVISIBLE);
                         prog_circle.setVisibility(View.INVISIBLE);
                         rl_operador.setVisibility(View.VISIBLE);

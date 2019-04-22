@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DBCore extends SQLiteOpenHelper {
     private static final String DB_NAME = "PedidoNewPointer";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     public DBCore(Context ctx){
         super(ctx, DB_NAME, null, DB_VERSION);
@@ -18,7 +18,7 @@ public class DBCore extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // TODO Auto-generated method stub
-        db.execSQL("create table config(db_string text, estacao text, taxa real, digito_verificador integer, pergunta_mesa integer, titulo_loja text, nmin_mesa text, nmax_mesa text, dbbkp_date text, phone_selection integer, product_selection integer, preconta integer, conferencia integer);");
+        db.execSQL("create table config(db_string text, estacao text, taxa real, digito_verificador integer, pergunta_mesa integer, titulo_loja text, nmin_mesa text, nmax_mesa text, dbbkp_date text, busca_selection integer, operacao_selection integer, preconta integer, conferencia integer);");
         db.execSQL("create table product(id text, name text, family integer, unit text, fl_imp integer, cd_imp integer, fl_acomp integer, acomp text, atalho integer);");
         db.execSQL("create table family(id integer, name text);");
         db.execSQL("create table groupacomp(id integer, name text, selecao integer);");

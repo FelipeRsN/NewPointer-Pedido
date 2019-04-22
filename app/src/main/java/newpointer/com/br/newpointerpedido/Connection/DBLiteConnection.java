@@ -31,7 +31,7 @@ public class DBLiteConnection{
     /////////////////////// Configuracoes /////////////////////////
     ////// insert /////////
 
-    public void insertConfig(String string_bd, String estacao, Double taxa, int digito_verificador, int pergunta_mesa, String titulo_loja, String nmin_mesa, String nmax_mesa, String bdbkp_date, int phone_selec, int product_selec, int preconta, int conferencia) {
+    public void insertConfig(String string_bd, String estacao, Double taxa, int digito_verificador, int pergunta_mesa, String titulo_loja, String nmin_mesa, String nmax_mesa, String bdbkp_date, int busca_selec, int operacao_select, int preconta, int conferencia) {
         ContentValues values = new ContentValues();
         values.put("db_string", string_bd);
         values.put("estacao", estacao);
@@ -42,8 +42,8 @@ public class DBLiteConnection{
         values.put("nmin_mesa", nmin_mesa);
         values.put("nmax_mesa", nmax_mesa);
         values.put("dbbkp_date", bdbkp_date);
-        values.put("phone_selection", phone_selec);
-        values.put("product_selection", product_selec);
+        values.put("busca_selection", busca_selec);
+        values.put("operacao_selection", operacao_select);
         values.put("preconta", preconta);
         values.put("conferencia", conferencia);
         db.insert("config", null, values);
@@ -58,7 +58,7 @@ public class DBLiteConnection{
     ////// Select /////////
 
     public ConfigModel selectConfig() {
-        String[] columns = new String[]{"db_string", "estacao", "taxa", "digito_verificador", "pergunta_mesa", "titulo_loja", "nmin_mesa", "nmax_mesa","dbbkp_date","phone_selection","product_selection","preconta","conferencia"};
+        String[] columns = new String[]{"db_string", "estacao", "taxa", "digito_verificador", "pergunta_mesa", "titulo_loja", "nmin_mesa", "nmax_mesa","dbbkp_date","busca_selection","operacao_selection","preconta","conferencia"};
         Cursor cursor = db.query("config", columns, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             do {

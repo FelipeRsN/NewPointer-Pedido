@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             tvnmesa.setVisibility(View.VISIBLE);
         }
 
-        if (config.getPhone_selection() == 1) {
+        if (config.getOperacao_selection() == 1) {
             final float scale = getResources().getDisplayMetrics().density;
             int pixels = (int) (100 * scale + 0.5f);
             bt_0.getLayoutParams().width = pixels;
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             bt_9.setTextSize(font);
         }
 
-        switch (config.getProduct_selection()) {
+        switch (config.getBusca_selection()) {
             case 0:
                 bt_atalhos.callOnClick();
                 break;

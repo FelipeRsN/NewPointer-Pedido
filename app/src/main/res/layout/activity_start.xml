@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Activity.StartActivity"
-    android:orientation="vertical"
-    android:layout_weight="3">
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="230dp"
         android:background="@color/colorPrimary"
-        android:elevation="8dp"
-        android:layout_weight="2">
+        android:elevation="8dp">
 
         <Button
             android:id="@+id/bt_start_config"
@@ -37,14 +39,19 @@
             android:src="@drawable/backspace"
             style="?android:attr/borderlessButtonStyle"/>
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/tv_start_tmesa"
             android:layout_width="140dp"
             android:layout_height="60dp"
             android:gravity="center_vertical"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:textSize="20sp"
+            app:autoSizeMaxTextSize="20sp"
+            app:autoSizeMinTextSize="14sp"
+            android:autoSizeTextType="uniform"
+            android:maxLines="1"
+            android:lines="1"
+            android:includeFontPadding="false"
             android:textStyle="bold"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
@@ -76,9 +83,12 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -723,5 +733,4 @@
 
     </RelativeLayout>
 
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

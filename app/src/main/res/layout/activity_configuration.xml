@@ -1,44 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Activity.ConfigurationActivity">
 
-    <RelativeLayout
-        android:id="@+id/tb_main"
-        android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
+    <View
+        android:id="@+id/view"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
-        android:elevation="8dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tv_conf_information"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:gravity="center_vertical"
-            android:text="Configurações"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/tv_conf_information"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/view"
+        android:gravity="center_vertical"
+        android:text="Configurações"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"/>
 
-        <ImageButton
-            android:id="@+id/ib_conf_return"
-            android:layout_width="?android:attr/actionBarSize"
-            android:layout_height="?android:attr/actionBarSize"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:src="@drawable/arrow_left_48"
-            style="?android:attr/borderlessButtonStyle"/>
-
-    </RelativeLayout>
+    <ImageButton
+        android:id="@+id/ib_conf_return"
+        android:layout_width="?android:attr/actionBarSize"
+        android:layout_height="?android:attr/actionBarSize"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/arrow_left_48"
+        style="?android:attr/borderlessButtonStyle"/>
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/tb_main"
-        android:layout_above="@+id/bt_conf_atualizar">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bt_conf_atualizar"
+        app:layout_constraintTop_toBottomOf="@id/view"
+        android:layout_above="@+id/bt_conf_atualizar"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp">
 
         <LinearLayout
             android:id="@+id/ll_conf_form"
@@ -195,7 +203,7 @@
                     android:textColor="#000000"/>
 
                 <Spinner
-                    android:id="@+id/sp_conf_prod"
+                    android:id="@+id/sp_conf_busca"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -203,7 +211,7 @@
                     android:layout_below="@+id/tv_conf_busca" />
 
                 <View
-                    android:layout_below="@+id/sp_conf_prod"
+                    android:layout_below="@+id/sp_conf_busca"
                     android:layout_width="match_parent"
                     android:layout_height="0.6dp"
                     android:layout_marginTop="-10dp"
@@ -230,7 +238,7 @@
                     android:textColor="#000000"/>
 
                 <Spinner
-                    android:id="@+id/sp_conf_operacao"
+                    android:id="@+id/sp_conf_modo_operacao"
                     android:layout_below="@+id/tv_conf_op"
                     android:layout_width="match_parent"
                     android:layout_marginTop="10dp"
@@ -238,7 +246,7 @@
                     android:layout_height="wrap_content"/>
 
                 <View
-                    android:layout_below="@+id/sp_conf_operacao"
+                    android:layout_below="@+id/sp_conf_modo_operacao"
                     android:layout_width="match_parent"
                     android:layout_height="0.6dp"
                     android:layout_marginTop="-10dp"
@@ -272,13 +280,15 @@
 
     <Button
         android:id="@+id/bt_conf_atualizar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="60dp"
         android:background="@color/colorPrimary"
         android:text="Atualizar dados"
         android:textColor="#FFFFFF"
         android:textAllCaps="false"
         android:textSize="18sp"
-        android:layout_alignParentBottom="true"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

@@ -13,12 +13,12 @@ public class ConfigModel {
     private String nmin_mesa;
     private String nmax_mesa;
     private String dbbkp_date;
-    private int phone_selection;
-    private int product_selection;
+    private int busca_selection;
+    private int operacao_selection;
     private int preconta;
     private int conferencia;
 
-    public ConfigModel(String string_bd, String estacao, Double taxa, int digito_verificador, int pergunta_mesa, String titulo_loja, String nmin_mesa, String nmax_mesa, String dbbkp_date, int phone_selection, int product_selection, int preconta, int conferencia){
+    public ConfigModel(String string_bd, String estacao, Double taxa, int digito_verificador, int pergunta_mesa, String titulo_loja, String nmin_mesa, String nmax_mesa, String dbbkp_date, int busca_selection, int operacao_selection, int preconta, int conferencia){
         this.string_bd = string_bd;
         this.estacao = estacao;
         this.taxa = taxa;
@@ -28,8 +28,8 @@ public class ConfigModel {
         this.nmin_mesa = nmin_mesa;
         this.nmax_mesa = nmax_mesa;
         this.dbbkp_date = dbbkp_date;
-        this.phone_selection = phone_selection;
-        this.product_selection = product_selection;
+        this.busca_selection = busca_selection;
+        this.operacao_selection = operacao_selection;
         this.preconta = preconta;
         this.conferencia = conferencia;
     }
@@ -122,19 +122,19 @@ public class ConfigModel {
         this.dbbkp_date = dbbkp_date;
     }
 
-    public int getPhone_selection() {
-        return phone_selection;
+    public int getBusca_selection() {
+        return busca_selection;
     }
 
-    public void setPhone_selection(int phone_selection) {
-        this.phone_selection = phone_selection;
+    public void setBusca_selection(int busca_selection) {
+        this.busca_selection = busca_selection;
     }
 
-    public int getProduct_selection() {
-        return product_selection;
+    public int getOperacao_selection() {
+        return operacao_selection;
     }
 
-    public void setProduct_selection(int product_selection) {
-        this.product_selection = product_selection;
+    public void setOperacao_selection(int operacao_selection) {
+        this.operacao_selection = operacao_selection;
     }
 }
