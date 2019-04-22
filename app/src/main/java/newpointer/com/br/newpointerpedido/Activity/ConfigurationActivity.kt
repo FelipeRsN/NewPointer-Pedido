@@ -118,11 +118,15 @@ class ConfigurationActivity : AppCompatActivity() {
                                 conferencia)
 
                         Toast.makeText(this, "Dados de configuração atualizados com sucesso. Reiniciando sistema...", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(applicationContext, LoadingActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                        /*val intent = Intent(applicationContext, LoadingActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK and Intent.FLAG_ACTIVITY_NEW_TASK
                         startActivity(intent)
                         android.os.Process.killProcess(android.os.Process.myPid())
-                        System.exit(0)
+                        System.exit(0)*/
+
+                        finishAffinity()
+                        startActivity(Intent(this, LoadingActivity::class.java))
 
                     } else et_conf_taxa.error = "Campo obrigatório, caso não use taxa digite 0.0"
                 } else et_conf_estacao.error = "Campo obrigatório para identificação do dispositivo e operador"
@@ -141,7 +145,7 @@ class ConfigurationActivity : AppCompatActivity() {
                 sw_conf_preconta.isChecked != backupPreconta ||
                 sw_conf_conferencia.isChecked != backupConferencia) {
 
-            val builder = AlertDialog.Builder(this, R.style.YourDialogStyle)
+            val builder = AlertDialog.Builder(this, newpointer.com.br.newpointerpedido.R.style.YourDialogStyle)
             builder.setTitle("Sair das configurações")
             builder.setMessage("Alguns itens foram modificados e ainda não foram salvos, deseja excluir as modificações e sair?")
             builder.setPositiveButton("Excluir") { dialog, which -> finishAfterTransition() }
