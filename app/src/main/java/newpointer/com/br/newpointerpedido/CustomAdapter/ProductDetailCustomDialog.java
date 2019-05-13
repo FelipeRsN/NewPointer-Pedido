@@ -33,7 +33,7 @@ import newpointer.com.br.newpointerpedido.R;
 /**
  * Created by FelipeRsN on 7/4/16.
  */
-public class ProductDetailCustomDialog extends Dialog implements View.OnClickListener{
+public class ProductDetailCustomDialog extends Dialog implements View.OnClickListener {
     private Activity act;
     private Context ctx;
     private TextView prodname;
@@ -54,12 +54,17 @@ public class ProductDetailCustomDialog extends Dialog implements View.OnClickLis
     private String AcompCompleto = "";
     private BadgeView badge;
 
-    public ProductDetailCustomDialog(Context context, Activity act, ProductModel prod, BadgeView badge) {
+    private Boolean pergMesa;
+    private String comanda;
+
+    public ProductDetailCustomDialog(Context context, Activity act, ProductModel prod, BadgeView badge, Boolean pergMesa, String comanda) {
         super(context);
         this.ctx = context;
         this.act = act;
         this.prod = prod;
         this.badge = badge;
+        this.pergMesa = pergMesa;
+        this.comanda = comanda;
     }
 
     @Override
@@ -71,46 +76,46 @@ public class ProductDetailCustomDialog extends Dialog implements View.OnClickLis
         startVar();
 
         prodname.setText(prod.getName());
-        String stringCod = String.format("%14s", prod.getId()+"").replace(' ', '0');
+        String stringCod = String.format("%14s", prod.getId() + "").replace(' ', '0');
         prodcode.setText(stringCod);
 
-        if(prod.getFl_acomp() == 1){
+        if (prod.getFl_acomp() == 1) {
             String aco = prod.getAcomp();
-            if(aco.contains(",")){
+            if (aco.contains(",")) {
                 // mais de 1 acompanhamento
                 String[] splitAco = aco.split(",");
                 int i = 0;
                 List<AcompanhamentoModel> ac = new ArrayList<AcompanhamentoModel>();
-                while (i < splitAco.length){
+                while (i < splitAco.length) {
                     ac.clear();
                     ac = dbl.selectAcompByGroup(Integer.parseInt(splitAco[i]));
                     GrupoAcompModel gam = dbl.selectGrupoAcomp(Integer.parseInt(splitAco[i]));
-                    list.add(new GroupAcomp_ListView_Model(gam.getId(),gam.getName(),gam.getSelecao(),1));
+                    list.add(new GroupAcomp_ListView_Model(gam.getId(), gam.getName(), gam.getSelecao(), 1));
                     int j = 0;
-                    while (j < ac.size()){
+                    while (j < ac.size()) {
                         list.add(new GroupAcomp_ListView_Model(ac.get(j).getId(), ac.get(j).getName(), gam.getSelecao(), 0));
                         j++;
                     }
                     i++;
                 }
-                AcompanhamentosCustomAdapter aca = new AcompanhamentosCustomAdapter(act,ctx,list);
+                AcompanhamentosCustomAdapter aca = new AcompanhamentosCustomAdapter(act, ctx, list);
                 lv_adc.setAdapter(aca);
                 prog.setVisibility(View.INVISIBLE);
-            }else{
+            } else {
                 // 1 acompanhamento
                 List<AcompanhamentoModel> acompList = dbl.selectAcompByGroup(Integer.parseInt(aco));
                 GrupoAcompModel gam = dbl.selectGrupoAcomp(Integer.parseInt(aco));
-                list.add(new GroupAcomp_ListView_Model(gam.getId(),gam.getName(),gam.getSelecao(),1));
+                list.add(new GroupAcomp_ListView_Model(gam.getId(), gam.getName(), gam.getSelecao(), 1));
                 int i = 0;
-                while (i < acompList.size()){
+                while (i < acompList.size()) {
                     list.add(new GroupAcomp_ListView_Model(acompList.get(i).getId(), acompList.get(i).getName(), gam.getSelecao(), 0));
                     i++;
                 }
-                AcompanhamentosCustomAdapter aca = new AcompanhamentosCustomAdapter(act,ctx,list);
+                AcompanhamentosCustomAdapter aca = new AcompanhamentosCustomAdapter(act, ctx, list);
                 lv_adc.setAdapter(aca);
                 prog.setVisibility(View.INVISIBLE);
             }
-        }else{
+        } else {
             prog.setVisibility(View.INVISIBLE);
             tvacomp.setVisibility(View.VISIBLE);
         }
@@ -118,18 +123,18 @@ public class ProductDetailCustomDialog extends Dialog implements View.OnClickLis
         lv_adc.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(list.get(i).getMode() == 0){
+                if (list.get(i).getMode() == 0) {
                     CheckBox cb = (CheckBox) view.findViewById(R.id.cb_acomp_desc);
-                    if(cb.isChecked()){
+                    if (cb.isChecked()) {
                         cb.setChecked(false);
-                        AcompCompleto = AcompCompleto.replace("---" + list.get(i).getDesc()+"\n", "");
+                        AcompCompleto = AcompCompleto.replace("---" + list.get(i).getDesc() + "\n", "");
                         AcompCompleto = AcompCompleto.replace("\n---" + list.get(i).getDesc(), "");
                         AcompCompleto = AcompCompleto.replace("---" + list.get(i).getDesc(), "");
-                    }else{
+                    } else {
                         cb.setChecked(true);
-                        if(AcompCompleto.equals("")){
+                        if (AcompCompleto.equals("")) {
                             AcompCompleto = AcompCompleto + "---" + list.get(i).getDesc();
-                        }else{
+                        } else {
                             AcompCompleto = AcompCompleto + "\n---" + list.get(i).getDesc();
                         }
                     }
@@ -139,7 +144,7 @@ public class ProductDetailCustomDialog extends Dialog implements View.OnClickLis
 
     }
 
-    private void startVar(){
+    private void startVar() {
         prodname = (TextView) findViewById(R.id.tv_dialogprod_name);
         prodcode = (TextView) findViewById(R.id.tv_dialogprod_cod);
         qtd = (TextView) findViewById(R.id.tv_dialogprod_qtd);
@@ -175,29 +180,35 @@ public class ProductDetailCustomDialog extends Dialog implements View.OnClickLis
         inputManager.hideSoftInputFromWindow(obs.getWindowToken(), 0);
 
         obs.clearFocus();
-        if(view == close){
+        if (view == close) {
             act.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
             dismiss();
         }
-        if(view == plus){
+        if (view == plus) {
             intquant++;
-            qtd.setText(intquant+"");
+            qtd.setText(intquant + "");
         }
-        if(view == minus){
-            if(intquant>1){
+        if (view == minus) {
+            if (intquant > 1) {
                 intquant--;
-                qtd.setText(intquant+"");
+                qtd.setText(intquant + "");
             }
         }
-        if(view == add){
+        if (view == add) {
             String tobs = "";
-            if(obs.getText().toString().length()>0){
+            if (obs.getText().toString().length() > 0) {
                 tobs = obs.getText().toString();
             }
-            dbl.insertProdCarrinho(prod.getId(),prod.getName(),intquant,AcompCompleto,tobs);
+
+            if (pergMesa) {
+                dbl.insertProdCarrinho(prod.getId(), prod.getName(), intquant, AcompCompleto, tobs, comanda);
+            } else {
+                dbl.insertProdCarrinho(prod.getId(), prod.getName(), intquant, AcompCompleto, tobs, "000000");
+            }
+
             int b = Integer.parseInt(badge.getText().toString());
             b++;
-            badge.setText(b+"");
+            badge.setText(b + "");
             Toast.makeText(act, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
             this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 

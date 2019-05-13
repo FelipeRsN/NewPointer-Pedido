@@ -12,11 +12,11 @@ import android.widget.Toast;
 
 import newpointer.com.br.newpointerpedido.Connection.DBLiteConnection;
 import newpointer.com.br.newpointerpedido.CustomAdapter.OperadorCustomDialog;
-import newpointer.com.br.newpointerpedido.CustomAdapter.PergMesaCustomDialog;
+import newpointer.com.br.newpointerpedido.CustomAdapter.PergComandaCustomDialog;
 import newpointer.com.br.newpointerpedido.Model.ConfigModel;
 import newpointer.com.br.newpointerpedido.R;
 
-public class StartActivity extends AppCompatActivity implements View.OnClickListener{
+public class StartActivity extends AppCompatActivity implements View.OnClickListener {
     private Button bt_0;
     private Button bt_1;
     private Button bt_2;
@@ -46,11 +46,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
         startVar();
 
-        config = dbl.selectConfig();
-        titulo.setText(config.getTitulo_loja());
-
-
-        if(config.getOperacao_selection() == 1){
+        if (config.getOperacao_selection() == 1) {
             final float scale = getResources().getDisplayMetrics().density;
             int pixels = (int) (100 * scale + 0.5f);
             bt_0.getLayoutParams().width = pixels;
@@ -88,7 +84,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private void startVar(){
+    private void startVar() {
         bt_0 = (Button) findViewById(R.id.bt_start_0);
         bt_1 = (Button) findViewById(R.id.bt_start_1);
         bt_2 = (Button) findViewById(R.id.bt_start_2);
@@ -122,168 +118,195 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         my_account.setOnClickListener(this);
         make_order.setOnClickListener(this);
         configuration.setOnClickListener(this);
+
+        config = dbl.selectConfig();
+        if (config.getPergunta_mesa() == 1) {
+            titulo.setText("MESA");
+        } else {
+            titulo.setText(config.getTitulo_loja());
+        }
     }
 
     @Override
     public void onClick(View view) {
-        if(view == bt_0){
+        if (view == bt_0) {
             nmesa = comanda.getText().toString();
-            nmesa = nmesa+"0";
+            nmesa = nmesa + "0";
             comanda.setText(nmesa);
         }
-        if(view == bt_1){
+        if (view == bt_1) {
             nmesa = comanda.getText().toString();
-            nmesa = nmesa+"1";
+            nmesa = nmesa + "1";
             comanda.setText(nmesa);
         }
-        if(view == bt_2){
+        if (view == bt_2) {
             nmesa = comanda.getText().toString();
-            nmesa = nmesa+"2";
+            nmesa = nmesa + "2";
             comanda.setText(nmesa);
         }
-        if(view == bt_3){
+        if (view == bt_3) {
             nmesa = comanda.getText().toString();
-            nmesa = nmesa+"3";
+            nmesa = nmesa + "3";
             comanda.setText(nmesa);
         }
-        if(view == bt_4){
+        if (view == bt_4) {
             nmesa = comanda.getText().toString();
-            nmesa = nmesa+"4";
+            nmesa = nmesa + "4";
             comanda.setText(nmesa);
         }
-        if(view == bt_5){
+        if (view == bt_5) {
             nmesa = comanda.getText().toString();
-            nmesa = nmesa+"5";
+            nmesa = nmesa + "5";
             comanda.setText(nmesa);
         }
-        if(view == bt_6){
+        if (view == bt_6) {
             nmesa = comanda.getText().toString();
-            nmesa = nmesa+"6";
+            nmesa = nmesa + "6";
             comanda.setText(nmesa);
         }
-        if(view == bt_7){
+        if (view == bt_7) {
             nmesa = comanda.getText().toString();
-            nmesa = nmesa+"7";
+            nmesa = nmesa + "7";
             comanda.setText(nmesa);
         }
-        if(view == bt_8){
+        if (view == bt_8) {
             nmesa = comanda.getText().toString();
-            nmesa = nmesa+"8";
+            nmesa = nmesa + "8";
             comanda.setText(nmesa);
         }
-        if(view == bt_9){
+        if (view == bt_9) {
             nmesa = comanda.getText().toString();
-            nmesa = nmesa+"9";
+            nmesa = nmesa + "9";
             comanda.setText(nmesa);
         }
-        if(view == bt_back){
+        if (view == bt_back) {
             nmesa = comanda.getText().toString();
             if (!nmesa.isEmpty()) nmesa = nmesa.substring(0, nmesa.length() - 1);
             comanda.setText(nmesa);
         }
-        if(view == make_order){
-            if(comanda.getText().toString().isEmpty()){
+        if (view == make_order) {
+            if (comanda.getText().toString().isEmpty()) {
                 Toast.makeText(StartActivity.this, "Digito da mesa obrigatório", Toast.LENGTH_SHORT).show();
-            }else{
+            } else {
                 int ncomanda = Integer.parseInt(comanda.getText().toString());
-                if(ncomanda < Integer.parseInt(config.getNmin_mesa()) || ncomanda > Integer.parseInt(config.getNmax_mesa())){
+                if (ncomanda < Integer.parseInt(config.getNmin_mesa()) || ncomanda > Integer.parseInt(config.getNmax_mesa())) {
                     Toast.makeText(StartActivity.this, "Numero da mesa fora do limite", Toast.LENGTH_SHORT).show();
                     comanda.setText("");
                     nmesa = "";
-                }else{
-                    if(dbl.selectConfig().getDigito_verificador() == 1){
+                } else {
+                    if (dbl.selectConfig().getDigito_verificador() == 1) {
                         String stringComanda = String.format("%6s", ncomanda).replace(' ', '0');
                         int impar = ((Integer.parseInt(stringComanda.substring(4, 5))) + (Integer.parseInt(stringComanda.substring(2, 3))) + (Integer.parseInt(stringComanda.substring(0, 1)))) * 3;
                         int par = (Integer.parseInt(stringComanda.substring(3, 4))) + (Integer.parseInt(stringComanda.substring(1, 2)));
                         int soma = par + impar;
-                        String so = ""+ soma;
+                        String so = "" + soma;
                         int tam = so.length();
                         int digito = Integer.parseInt(so.substring(tam - 1));
-                        if(digito != 0){
-                            digito = digito -10;
+                        if (digito != 0) {
+                            digito = digito - 10;
                         }
-                        digito = digito *(-1);
-                        if(digito != (Integer.parseInt(stringComanda.substring(5, 6)))){
+                        digito = digito * (-1);
+                        if (digito != (Integer.parseInt(stringComanda.substring(5, 6)))) {
                             Toast.makeText(StartActivity.this, "Digito verificador incorreto.", Toast.LENGTH_SHORT).show();
                             comanda.setText("");
                             nmesa = "";
-                        }else{
+                        } else {
                             comanda.setText("");
                             nmesa = "";
-                            if(config.getPergunta_mesa() == 1){
-                                PergMesaCustomDialog pmcd = new PergMesaCustomDialog(StartActivity.this, StartActivity.this,stringComanda);
+                            if (config.getPergunta_mesa() == 1) {
+
+                                PergComandaCustomDialog pmcd = new PergComandaCustomDialog(StartActivity.this, StartActivity.this, stringComanda, false);
+                                pmcd.setCancelable(false);
+                                pmcd.setCanceledOnTouchOutside(false);
+                                pmcd.show();
+
+                            } else {
+                                i.setClass(StartActivity.this, MainActivity.class);
+                                i.putExtra("numeroMesa", stringComanda);
+                                startActivity(i);
+                            }
+                        }
+                    } else {
+                        String stringComanda = String.format("%6s", ncomanda).replace(' ', '0');
+                        comanda.setText("");
+                        nmesa = "";
+                        if (config.getPergunta_mesa() == 1) {
+
+                            PergComandaCustomDialog pmcd = new PergComandaCustomDialog(StartActivity.this, StartActivity.this, stringComanda, false);
+                            pmcd.setCancelable(false);
+                            pmcd.setCanceledOnTouchOutside(false);
+                            pmcd.show();
+
+                        } else {
+                            i.setClass(StartActivity.this, MainActivity.class);
+                            i.putExtra("numeroMesa", stringComanda);
+                            startActivity(i);
+                        }
+                    }
+                }
+            }
+        }
+        if (view == my_account) {
+            if (comanda.getText().toString().isEmpty()) {
+                Toast.makeText(StartActivity.this, "Digito da mesa obrigatório", Toast.LENGTH_SHORT).show();
+            } else {
+                int ncomanda = Integer.parseInt(comanda.getText().toString());
+                if (ncomanda < Integer.parseInt(config.getNmin_mesa()) || ncomanda > Integer.parseInt(config.getNmax_mesa())) {
+                    Toast.makeText(StartActivity.this, "Numero da mesa fora do limite", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (dbl.selectConfig().getDigito_verificador() == 1) {
+                        String stringComanda = String.format("%6s", ncomanda).replace(' ', '0');
+                        int impar = ((Integer.parseInt(stringComanda.substring(4, 5))) + (Integer.parseInt(stringComanda.substring(2, 3))) + (Integer.parseInt(stringComanda.substring(0, 1)))) * 3;
+                        int par = (Integer.parseInt(stringComanda.substring(3, 4))) + (Integer.parseInt(stringComanda.substring(1, 2)));
+                        int soma = par + impar;
+                        String so = "" + soma;
+                        int tam = so.length();
+                        int digito = Integer.parseInt(so.substring(tam - 1));
+                        if (digito != 0) {
+                            digito = digito - 10;
+                        }
+                        digito = digito * (-1);
+                        if (digito != (Integer.parseInt(stringComanda.substring(5, 6)))) {
+                            Toast.makeText(StartActivity.this, "Digito verificador incorreto.", Toast.LENGTH_SHORT).show();
+                            comanda.setText("");
+                            nmesa = "";
+                        } else {
+                            comanda.setText("");
+                            nmesa = "";
+
+                            if (config.getPergunta_mesa() == 1) {
+                                PergComandaCustomDialog pmcd = new PergComandaCustomDialog(StartActivity.this, StartActivity.this, stringComanda, true);
                                 pmcd.setCancelable(false);
                                 pmcd.setCanceledOnTouchOutside(false);
                                 pmcd.show();
                             }else{
-                                i.setClass(StartActivity.this, MainActivity.class);
-                                i.putExtra("numeroMesa",stringComanda);
+                                i.setClass(StartActivity.this, MinhaContaActivity.class);
+                                i.putExtra("numeroMesa", stringComanda);
+                                i.putExtra("gerador", dbl.selectConfig().getTitulo_loja());
                                 startActivity(i);
                             }
                         }
-                    }else{
+                    } else {
                         String stringComanda = String.format("%6s", ncomanda).replace(' ', '0');
                         comanda.setText("");
                         nmesa = "";
-                        if(config.getPergunta_mesa() == 1){
-                            PergMesaCustomDialog pmcd = new PergMesaCustomDialog(StartActivity.this, StartActivity.this,stringComanda);
+
+                        if (config.getPergunta_mesa() == 1) {
+                            PergComandaCustomDialog pmcd = new PergComandaCustomDialog(StartActivity.this, StartActivity.this, stringComanda, true);
                             pmcd.setCancelable(false);
                             pmcd.setCanceledOnTouchOutside(false);
                             pmcd.show();
-                        }else {
-                            i.setClass(StartActivity.this, MainActivity.class);
-                            i.putExtra("numeroMesa",stringComanda);
-                            startActivity(i);
-                        }
-                    }
-                }
-            }
-        }
-        if(view == my_account){
-            if(comanda.getText().toString().isEmpty()){
-                Toast.makeText(StartActivity.this, "Digito da mesa obrigatório", Toast.LENGTH_SHORT).show();
-            }else{
-                int ncomanda = Integer.parseInt(comanda.getText().toString());
-                if(ncomanda < Integer.parseInt(config.getNmin_mesa()) || ncomanda > Integer.parseInt(config.getNmax_mesa())){
-                    Toast.makeText(StartActivity.this, "Numero da mesa fora do limite", Toast.LENGTH_SHORT).show();
-                }else{
-                    if(dbl.selectConfig().getDigito_verificador() == 1){
-                        String stringComanda = String.format("%6s", ncomanda).replace(' ', '0');
-                        int impar = ((Integer.parseInt(stringComanda.substring(4, 5))) + (Integer.parseInt(stringComanda.substring(2, 3))) + (Integer.parseInt(stringComanda.substring(0, 1)))) * 3;
-                        int par = (Integer.parseInt(stringComanda.substring(3, 4))) + (Integer.parseInt(stringComanda.substring(1, 2)));
-                        int soma = par + impar;
-                        String so = ""+ soma;
-                        int tam = so.length();
-                        int digito = Integer.parseInt(so.substring(tam - 1));
-                        if(digito != 0){
-                            digito = digito -10;
-                        }
-                        digito = digito *(-1);
-                        if(digito != (Integer.parseInt(stringComanda.substring(5, 6)))){
-                            Toast.makeText(StartActivity.this, "Digito verificador incorreto.", Toast.LENGTH_SHORT).show();
-                            comanda.setText("");
-                            nmesa = "";
                         }else{
-                            comanda.setText("");
-                            nmesa = "";
                             i.setClass(StartActivity.this, MinhaContaActivity.class);
-                            i.putExtra("numeroMesa",stringComanda);
-                            i.putExtra("gerador",dbl.selectConfig().getTitulo_loja());
+                            i.putExtra("numeroMesa", stringComanda);
+                            i.putExtra("gerador", dbl.selectConfig().getTitulo_loja());
                             startActivity(i);
                         }
-                    }else{
-                        String stringComanda = String.format("%6s", ncomanda).replace(' ', '0');
-                        comanda.setText("");
-                        nmesa = "";
-                        i.setClass(StartActivity.this, MinhaContaActivity.class);
-                        i.putExtra("numeroMesa",stringComanda);
-                        i.putExtra("gerador",dbl.selectConfig().getTitulo_loja());
-                        startActivity(i);
                     }
                 }
             }
         }
-        if(view == configuration){
+        if (view == configuration) {
             OperadorCustomDialog ocd = new OperadorCustomDialog(StartActivity.this, StartActivity.this);
             ocd.setCanceledOnTouchOutside(false);
             ocd.setCancelable(false);

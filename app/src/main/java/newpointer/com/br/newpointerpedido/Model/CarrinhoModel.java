@@ -10,14 +10,34 @@ public class CarrinhoModel {
     private int qtd_prod;
     private String acomp_prod;
     private String obs_prod;
+    private String numComanda;
+    private Boolean firstItem;
 
-    public CarrinhoModel(int id_c, String id_p, String name, int qtd, String acomp, String obs){
+    public CarrinhoModel(int id_c, String id_p, String name, int qtd, String acomp, String obs, String numComanda, Boolean firstItem) {
         this.id_carrinho = id_c;
         this.id_prod = id_p;
         this.name_prod = name;
         this.qtd_prod = qtd;
         this.acomp_prod = acomp;
         this.obs_prod = obs;
+        this.numComanda = numComanda;
+        this.firstItem = firstItem;
+    }
+
+    public Boolean getFirstItem() {
+        return firstItem;
+    }
+
+    public void setFirstItem(Boolean firstItem) {
+        this.firstItem = firstItem;
+    }
+
+    public String getNumComanda() {
+        return numComanda;
+    }
+
+    public void setNumComanda(String numComanda) {
+        this.numComanda = numComanda;
     }
 
     public int getId_carrinho() {

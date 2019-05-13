@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#50E0E0E0"
     tools:context=".Activity.CarinhoActivity">
 
     <View
@@ -33,7 +34,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/lv_carrinho"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -41,6 +42,8 @@
         android:layout_marginRight="5dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -82,6 +85,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_main_comanda" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/newComanda"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="Adicionar novo(a) comanda"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="@id/fab_carrinho_send"
+        app:layout_constraintTop_toTopOf="@id/fab_carrinho_send"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/button_add_new_comanda"
+        android:layout_margin="16dp"/>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_carrinho_send"

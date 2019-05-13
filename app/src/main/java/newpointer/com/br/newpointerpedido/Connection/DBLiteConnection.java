@@ -310,13 +310,15 @@ public class DBLiteConnection{
     /////////////////////// Carrinho /////////////////////////
     ////// insert /////////
 
-    public void insertProdCarrinho(String id, String name, int qtd, String acomp, String obs) {
+    public void insertProdCarrinho(String id, String name, int qtd, String acomp, String obs, String numComanda) {
         ContentValues values = new ContentValues();
         values.put("id_prod", id);
         values.put("name_prod", name);
         values.put("qtd_prod", qtd);
         values.put("acomp_prod", acomp);
         values.put("obs_prod", obs);
+        if(numComanda != null) values.put("numComanda", numComanda);
+        else values.put("numComanda", "000000");
         db.insert("carrinho", null, values);
     }
 
@@ -334,11 +336,11 @@ public class DBLiteConnection{
 
     public ArrayList<CarrinhoModel> selectCarrinho() {
         ArrayList<CarrinhoModel> carrinho = new ArrayList<CarrinhoModel>();
-        String[] columns = new String[]{"id_carrinho", "id_prod","name_prod","qtd_prod","acomp_prod","obs_prod"};
-        Cursor cursor = db.query("carrinho", columns, null, null, null, null, null);
+        String[] columns = new String[]{"id_carrinho", "id_prod","name_prod","qtd_prod","acomp_prod","obs_prod", "numComanda"};
+        Cursor cursor = db.query("carrinho", columns, null, null, null, null, "numComanda DESC");
         if (cursor.moveToFirst()) {
             do {
-                carrinho.add(new CarrinhoModel(cursor.getInt(0),cursor.getString(1),cursor.getString(2), cursor.getInt(3), cursor.getString(4), cursor.getString(5)));
+                carrinho.add(new CarrinhoModel(cursor.getInt(0),cursor.getString(1),cursor.getString(2), cursor.getInt(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), null));
             }while(cursor.moveToNext());
         }
         return carrinho;

@@ -24,7 +24,7 @@ import newpointer.com.br.newpointerpedido.R;
 /**
  * Created by FelipeRsN on 7/4/16.
  */
-public class ProductPesqCustomDialog extends Dialog implements View.OnClickListener{
+public class ProductPesqCustomDialog extends Dialog implements View.OnClickListener {
     private Activity act;
     private Context ctx;
     private Button close;
@@ -36,12 +36,17 @@ public class ProductPesqCustomDialog extends Dialog implements View.OnClickListe
     private String name;
     private TextView dialog;
 
-    public ProductPesqCustomDialog(Context context, Activity act, BadgeView badge, String name) {
+    private Boolean pergMesa;
+    private String comanda;
+
+    public ProductPesqCustomDialog(Context context, Activity act, BadgeView badge, String name, Boolean pergMesa, String comanda) {
         super(context);
         this.ctx = context;
         this.act = act;
         this.badge = badge;
         this.name = name;
+        this.pergMesa = pergMesa;
+        this.comanda = comanda;
     }
 
     @Override
@@ -53,8 +58,8 @@ public class ProductPesqCustomDialog extends Dialog implements View.OnClickListe
         startVar();
 
         prod = dbl.selectProdByName(name);
-        dialog.setText("Total encontrado: "+prod.size());
-        ProductCustomAdapter pca = new ProductCustomAdapter(act,ctx,prod);
+        dialog.setText("Total encontrado: " + prod.size());
+        ProductCustomAdapter pca = new ProductCustomAdapter(act, ctx, prod);
         lv_prod.setAdapter(pca);
 
         prog.setVisibility(View.INVISIBLE);
@@ -62,7 +67,7 @@ public class ProductPesqCustomDialog extends Dialog implements View.OnClickListe
         lv_prod.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(ctx,act,prod.get(position),badge);
+                ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(ctx, act, prod.get(position), badge, pergMesa, comanda);
                 pdcd.setCancelable(false);
                 pdcd.setCanceledOnTouchOutside(false);
                 pdcd.show();
@@ -75,10 +80,12 @@ public class ProductPesqCustomDialog extends Dialog implements View.OnClickListe
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 ProductModel p = prod.get(position);
                 String tobs = "";
-                dbl.insertProdCarrinho(p.getId(),p.getName(),1,"",tobs);
+
+                if (pergMesa) dbl.insertProdCarrinho(p.getId(), p.getName(), 1, "", tobs, comanda);
+                else dbl.insertProdCarrinho(p.getId(), p.getName(), 1, "", tobs, "000000");
                 int b = Integer.parseInt(badge.getText().toString());
                 b++;
-                badge.setText(b+"");
+                badge.setText(b + "");
                 Toast.makeText(act, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
                 dismiss();
                 return true;
@@ -87,7 +94,7 @@ public class ProductPesqCustomDialog extends Dialog implements View.OnClickListe
 
     }
 
-    private void startVar(){
+    private void startVar() {
 
         close = (Button) findViewById(R.id.bt_dialogpesq_close);
         lv_prod = (ListView) findViewById(R.id.lv_dialogpesq_prod);
@@ -100,7 +107,7 @@ public class ProductPesqCustomDialog extends Dialog implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        if(view == close){
+        if (view == close) {
             dismiss();
         }
     }

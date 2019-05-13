@@ -9,10 +9,12 @@ import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,18 +31,20 @@ import java.util.List;
 import java.util.Properties;
 
 import newpointer.com.br.newpointerpedido.Connection.DBLiteConnection;
-import newpointer.com.br.newpointerpedido.CustomAdapter.CarrinhoCustomAdapter;
+import newpointer.com.br.newpointerpedido.CustomAdapter.CarrinhoAdapter;
+import newpointer.com.br.newpointerpedido.CustomAdapter.PergComandaCustomDialog;
 import newpointer.com.br.newpointerpedido.Model.CarrinhoModel;
 import newpointer.com.br.newpointerpedido.R;
 
-public class CarinhoActivity extends AppCompatActivity implements View.OnClickListener{
+public class CarinhoActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageButton back;
     private ImageButton clear;
     private FloatingActionButton send;
     private ProgressBar prog;
-    private ListView lv_itens;
+    private RecyclerView lv_itens;
     private DBLiteConnection dbl;
+    private Button newComanda;
     public static List<CarrinhoModel> carrinho;
     private BadgeView badge;
     private TextView qtd_itens;
@@ -66,6 +70,13 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
     private boolean hasResult = false;
     private boolean sqlResponse = false;
 
+    private Boolean perguntaMesaMode = false;
+    //Numero da comanda
+    private String numComanda = "";
+
+    //Numero da mesa
+    private String numMesa = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,40 +84,56 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
 
         startVar();
 
-        
-
         j = getIntent();
         comanda = j.getStringExtra("comanda");
-        if(dbl.selectConfig().getPergunta_mesa() == 1){
-            smesa = j.getStringExtra("mesa");
-        }
-        carrinho = dbl.selectCarrinho();
-        qtd_itens.setText("Itens: "+carrinho.size());
-        CarrinhoCustomAdapter cca = new CarrinhoCustomAdapter(CarinhoActivity.this,CarinhoActivity.this,carrinho);
-        lv_itens.setAdapter(cca);
-        prog.setVisibility(View.INVISIBLE);
 
+        perguntaMesaMode = dbl.selectConfig().getPergunta_mesa() == 1;
+
+        if (perguntaMesaMode) {
+            smesa = j.getStringExtra("mesa");
+
+            numComanda = smesa;
+            numMesa = comanda;
+
+            newComanda.setText("Adicionar novo(a) " + dbl.selectConfig().getTitulo_loja());
+            newComanda.setVisibility(View.VISIBLE);
+        } else {
+            numComanda = comanda;
+
+            newComanda.setVisibility(View.GONE);
+        }
+
+
+        carrinho = dbl.selectCarrinho();
+        qtd_itens.setText("Itens: " + carrinho.size());
+
+        lv_itens.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        lv_itens.setAdapter(new CarrinhoAdapter(this, this, carrinho, perguntaMesaMode, dbl.selectConfig().getTitulo_loja()));
+
+        prog.setVisibility(View.INVISIBLE);
         badge = MainActivity.badge;
 
     }
 
-    private void startVar(){
+    private void startVar() {
         back = (ImageButton) findViewById(R.id.ib_carrinho_return);
         clear = (ImageButton) findViewById(R.id.ib_carrinho_clear);
         prog = (ProgressBar) findViewById(R.id.pb_carrinho_wait);
-        lv_itens = (ListView) findViewById(R.id.lv_carrinho);
+        lv_itens = findViewById(R.id.lv_carrinho);
         send = (FloatingActionButton) findViewById(R.id.fab_carrinho_send);
         qtd_itens = (TextView) findViewById(R.id.tv_carrinho_nitens);
+        newComanda = findViewById(R.id.newComanda);
         dbl = new DBLiteConnection(CarinhoActivity.this);
         send.setOnClickListener(this);
         back.setOnClickListener(this);
         clear.setOnClickListener(this);
         pd = new ProgressDialog(CarinhoActivity.this);
+        newComanda.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if(v == send){
+        if (v == send) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.YourDialogStyle);
             builder.setTitle("Concluir pedido");
             builder.setMessage("Concluir pedido e enviar para cozinha?");
@@ -120,10 +147,10 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
             builder.setCancelable(false);
             builder.show();
         }
-        if(v == back){
+        if (v == back) {
             finish();
         }
-        if(v == clear){
+        if (v == clear) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.YourDialogStyle);
             builder.setTitle("Apagar carrinho");
             builder.setMessage("Remover todos os itens do carrinho?");
@@ -140,26 +167,35 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
             builder.setCancelable(false);
             builder.show();
         }
+
+        if (v == newComanda) {
+            PergComandaCustomDialog pmcd = new PergComandaCustomDialog(this, this, numMesa, false);
+            pmcd.setCancelable(false);
+            pmcd.setCanceledOnTouchOutside(false);
+            pmcd.show();
+        }
     }
 
-    private void enviarProdutos(){
-        pd.setMessage("Testando conexão e enviando produtos... 15");
-        pd.setCancelable(false);
-        pd.setCanceledOnTouchOutside(false);
-        pd.show();
+    private void enviarProdutos() {
+        if(pd != null) {
+            pd.setMessage("Testando conexão e enviando produtos... 15");
+            pd.setCancelable(false);
+            pd.setCanceledOnTouchOutside(false);
+            pd.show();
+        }
         new EnviaProdutos().execute();
-        new CountDownTimer(15000, 1000){
+        new CountDownTimer(15000, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
-                pd.setMessage("Testando conexão e enviando produtos... " + millisUntilFinished / 1000);
+                if(pd != null) pd.setMessage("Testando conexão e enviando produtos... " + millisUntilFinished / 1000);
             }
 
             @Override
             public void onFinish() {
-                if(!hasResult){
-                    if(!sqlResponse) {
-                        pd.hide();
+                if (!hasResult) {
+                    if (!sqlResponse) {
+                        if(pd != null) pd.hide();
                         AlertDialog.Builder builder = new AlertDialog.Builder(CarinhoActivity.this, R.style.YourDialogStyle);
                         builder.setTitle("Problema ao enviar produtos");
                         builder.setMessage("Ocorreu um problema ao tentar enviar os produtos para o servidor e o tempo se esgotou, verifique sua conexão com a internet e clique em tentar novamente.");
@@ -195,61 +231,141 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
                 props.setProperty("user", "POINTER");
                 props.setProperty("password", "sysadmin");
                 props.setProperty("encoding", "WIN1252");
-                int cont = 0;
-                while (cont < carrinho.size()) {
-                    procedure_cdprod = procedure_cdprod+carrinho.get(cont).getId_prod()+"|";
-                    procedure_quant = procedure_quant+carrinho.get(cont).getQtd_prod()+"|";
-                    procedure_acomp = procedure_acomp+carrinho.get(cont).getAcomp_prod()+"|";
-                    procedure_obs = procedure_obs+carrinho.get(cont).getObs_prod()+"|";
-                    cont++;
-                }
 
-                procedure_nomeoperador = dbl.selectCurrentOp().getName();
-                procedure_comanda = comanda;
-                procedure_mesa = smesa;
-                procedure_codoperador = ""+dbl.selectCurrentOp().getId();
-                procedure_titulo = dbl.selectConfig().getTitulo_loja();
-                procedure_estacao = dbl.selectConfig().getEstacao();
-                procedure_tpestacao = "1";
-                procedure_valorindice = dbl.selectConfig().getTaxa()+"";
+                if (perguntaMesaMode) {
 
-                Log.i("prod",procedure_cdprod);
-                Log.i("qtd",procedure_quant);
-                Log.i("obs",procedure_obs);
-                Log.i("acomp",procedure_acomp);
-                Log.i("nomeop",procedure_nomeoperador);
-                Log.i("comanda",procedure_comanda);
-                Log.i("codop",procedure_codoperador);
-                Log.i("mesa",procedure_mesa);
-                Log.i("estacao",procedure_estacao);
-                Log.i("tpestacao",procedure_tpestacao);
-                Log.i("taxa",procedure_valorindice);
-                Log.i("titulo",procedure_titulo);
+                    String currentComanda = "";
 
-                Connection conn = DriverManager.getConnection("jdbc:firebirdsql://" + dbl.selectConfig().getString_bd() + "", props);
-                String sSql = "execute procedure GRAVA_CONSUMO_ANDROID('"+procedure_estacao+"','"+procedure_comanda+"','"+procedure_titulo+"'," +
-                        ""+procedure_codoperador+",'"+procedure_cdprod+"','"+procedure_quant+"','"+procedure_acomp+"','"+procedure_obs+"'," +
-                        "'"+procedure_nomeoperador+"',"+procedure_tpestacao+","+procedure_valorindice+",'"+procedure_mesa+"')";
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sSql);
-                ResultSetMetaData rsmd = rs.getMetaData();
-                int columnsNumber = rsmd.getColumnCount();
-                while (rs.next()) {
-                    hasResult = true;
-                    for (int i = 1; i <= columnsNumber; i++) {
-                        if (i > 1) System.out.print(",  ");
-                        String columnValue = rs.getString(i);
-                        System.out.print(columnValue + " " + rsmd.getColumnName(i));
+                    for (int i = 0; i < carrinho.size(); i++) {
+                        if (!carrinho.get(i).getNumComanda().equalsIgnoreCase(currentComanda)) {
+                            currentComanda = carrinho.get(i).getNumComanda();
+
+                            Log.i("TESTE", "Nova comanda encontrada, a comanda " + currentComanda);
+
+                            procedure_cdprod = "";
+                            procedure_quant = "";
+                            procedure_acomp = "";
+                            procedure_obs = "";
+
+                            for (int j = 0; j < carrinho.size(); j++) {
+                                CarrinhoModel item = carrinho.get(j);
+
+                                if (item.getNumComanda().equalsIgnoreCase(currentComanda)) {
+                                    Log.i("TESTE", "o envio da comanda " + currentComanda + " Tera o item " + item.getName_prod());
+
+                                    procedure_cdprod = procedure_cdprod + item.getId_prod() + "|";
+                                    procedure_quant = procedure_quant + item.getQtd_prod() + "|";
+                                    procedure_acomp = procedure_acomp + item.getAcomp_prod() + "|";
+                                    procedure_obs = procedure_obs + item.getObs_prod() + "|";
+                                }
+                            }
+
+                            procedure_nomeoperador = dbl.selectCurrentOp().getName();
+                            procedure_comanda = currentComanda;
+                            procedure_mesa = numMesa;
+                            procedure_codoperador = "" + dbl.selectCurrentOp().getId();
+                            procedure_titulo = dbl.selectConfig().getTitulo_loja();
+                            procedure_estacao = dbl.selectConfig().getEstacao();
+                            procedure_tpestacao = "1";
+                            procedure_valorindice = dbl.selectConfig().getTaxa() + "";
+
+                            Log.i("prod", procedure_cdprod);
+                            Log.i("qtd", procedure_quant);
+                            Log.i("obs", procedure_obs);
+                            Log.i("acomp", procedure_acomp);
+                            Log.i("nomeop", procedure_nomeoperador);
+                            Log.i("comanda", procedure_comanda);
+                            Log.i("codop", procedure_codoperador);
+                            Log.i("mesa", procedure_mesa);
+                            Log.i("estacao", procedure_estacao);
+                            Log.i("tpestacao", procedure_tpestacao);
+                            Log.i("taxa", procedure_valorindice);
+                            Log.i("titulo", procedure_titulo);
+
+                            Connection conn = DriverManager.getConnection("jdbc:firebirdsql://" + dbl.selectConfig().getString_bd() + "", props);
+                            String sSql = "execute procedure GRAVA_CONSUMO_ANDROID('" + procedure_estacao + "','" + procedure_comanda + "','" + procedure_titulo + "'," +
+                                    "" + procedure_codoperador + ",'" + procedure_cdprod + "','" + procedure_quant + "','" + procedure_acomp + "','" + procedure_obs + "'," +
+                                    "'" + procedure_nomeoperador + "'," + procedure_tpestacao + "," + procedure_valorindice + ",'" + procedure_mesa + "')";
+                            Statement stmt = conn.createStatement();
+                            ResultSet rs = stmt.executeQuery(sSql);
+                            ResultSetMetaData rsmd = rs.getMetaData();
+                            int columnsNumber = rsmd.getColumnCount();
+                            while (rs.next()) {
+                                hasResult = true;
+                                for (int k = 1; k <= columnsNumber; k++) {
+                                    if (k > 1) System.out.print(",  ");
+                                    String columnValue = rs.getString(k);
+                                    System.out.print(columnValue + " " + rsmd.getColumnName(k));
+                                }
+                                System.out.println("");
+                                if (rs.getString("RETORNO") == null) return_procedure = "null";
+                                else return_procedure = rs.getString("RETORNO");
+                            }
+                            rs.close();
+                            conn.close();
+                            stmt.close();
+                        }
                     }
-                    System.out.println("");
-                    if(rs.getString("RETORNO") == null) return_procedure = "null";
-                    else return_procedure = rs.getString("RETORNO");
-                    //return_procedure = rs.getString("RETORNO");
+
+                    return 1;
+
+                } else {
+                    int cont = 0;
+                    while (cont < carrinho.size()) {
+                        procedure_cdprod = procedure_cdprod + carrinho.get(cont).getId_prod() + "|";
+                        procedure_quant = procedure_quant + carrinho.get(cont).getQtd_prod() + "|";
+                        procedure_acomp = procedure_acomp + carrinho.get(cont).getAcomp_prod() + "|";
+                        procedure_obs = procedure_obs + carrinho.get(cont).getObs_prod() + "|";
+                        cont++;
+                    }
+
+                    procedure_nomeoperador = dbl.selectCurrentOp().getName();
+                    procedure_comanda = comanda;
+                    procedure_mesa = smesa;
+                    procedure_codoperador = "" + dbl.selectCurrentOp().getId();
+                    procedure_titulo = dbl.selectConfig().getTitulo_loja();
+                    procedure_estacao = dbl.selectConfig().getEstacao();
+                    procedure_tpestacao = "1";
+                    procedure_valorindice = dbl.selectConfig().getTaxa() + "";
+
+                    Log.i("prod", procedure_cdprod);
+                    Log.i("qtd", procedure_quant);
+                    Log.i("obs", procedure_obs);
+                    Log.i("acomp", procedure_acomp);
+                    Log.i("nomeop", procedure_nomeoperador);
+                    Log.i("comanda", procedure_comanda);
+                    Log.i("codop", procedure_codoperador);
+                    Log.i("mesa", procedure_mesa);
+                    Log.i("estacao", procedure_estacao);
+                    Log.i("tpestacao", procedure_tpestacao);
+                    Log.i("taxa", procedure_valorindice);
+                    Log.i("titulo", procedure_titulo);
+
+                    Connection conn = DriverManager.getConnection("jdbc:firebirdsql://" + dbl.selectConfig().getString_bd() + "", props);
+                    String sSql = "execute procedure GRAVA_CONSUMO_ANDROID('" + procedure_estacao + "','" + procedure_comanda + "','" + procedure_titulo + "'," +
+                            "" + procedure_codoperador + ",'" + procedure_cdprod + "','" + procedure_quant + "','" + procedure_acomp + "','" + procedure_obs + "'," +
+                            "'" + procedure_nomeoperador + "'," + procedure_tpestacao + "," + procedure_valorindice + ",'" + procedure_mesa + "')";
+                    Statement stmt = conn.createStatement();
+                    ResultSet rs = stmt.executeQuery(sSql);
+                    ResultSetMetaData rsmd = rs.getMetaData();
+                    int columnsNumber = rsmd.getColumnCount();
+                    while (rs.next()) {
+                        hasResult = true;
+                        for (int i = 1; i <= columnsNumber; i++) {
+                            if (i > 1) System.out.print(",  ");
+                            String columnValue = rs.getString(i);
+                            System.out.print(columnValue + " " + rsmd.getColumnName(i));
+                        }
+                        System.out.println("");
+                        if (rs.getString("RETORNO") == null) return_procedure = "null";
+                        else return_procedure = rs.getString("RETORNO");
+                        //return_procedure = rs.getString("RETORNO");
+                    }
+                    rs.close();
+                    conn.close();
+                    stmt.close();
+                    return 1;
                 }
-                rs.close();
-                conn.close();
-                stmt.close();
-                return 1;
             } catch (SQLException e1) {
                 e1.printStackTrace();
                 isError = true;
@@ -273,24 +389,24 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
             procedure_valorindice = "";
             procedure_titulo = "";
             pd.hide();
-            if(i == 1){
-                if(return_procedure.equalsIgnoreCase("OK")){
+            if (i == 1) {
+                if (return_procedure.equalsIgnoreCase("OK")) {
                     MainActivity.fa.finish();
                     pd.hide();
                     Toast.makeText(CarinhoActivity.this, "Produtos enviados com sucesso", Toast.LENGTH_SHORT).show();
                     finish();
-                }else{
-                    if(return_procedure.equalsIgnoreCase("null")){
+                } else {
+                    if (return_procedure.equalsIgnoreCase("null")) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(CarinhoActivity.this, R.style.YourDialogStyle);
                         builder.setTitle("Procedure returnou valor NULL. Favor comunicar o administrador");
-                        builder.setMessage("Retorno da procedure: "+return_procedure);
+                        builder.setMessage("Retorno da procedure: " + return_procedure);
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 finish();
                             }
                         });
-                        if(isError){
+                        if (isError) {
                             builder.setNegativeButton("Exibir Erro", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -305,10 +421,10 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
                         }
                         builder.setCancelable(false);
                         builder.show();
-                    }else{
+                    } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(CarinhoActivity.this, R.style.YourDialogStyle);
                         builder.setTitle("Falha ao enviar produtos");
-                        builder.setMessage("Retorno da procedure: "+return_procedure);
+                        builder.setMessage("Retorno da procedure: " + return_procedure);
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -319,7 +435,7 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
                         builder.show();
                     }
                 }
-            }else{
+            } else {
                 sqlResponse = true;
                 AlertDialog.Builder builder = new AlertDialog.Builder(CarinhoActivity.this, R.style.YourDialogStyle);
                 builder.setTitle("Falha ao conectar-se");
@@ -331,7 +447,7 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
                         finish();
                     }
                 });
-                if(isError){
+                if (isError) {
                     builder.setNegativeButton("Exibir Erro", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

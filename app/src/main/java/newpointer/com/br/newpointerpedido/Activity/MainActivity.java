@@ -96,6 +96,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static Activity fa;
     private Barcode barcodeResult;
 
+    private Boolean perguntaMesaMode = false;
+
+    //Numero da comanda
+    private String numComanda = "";
+
+    //Numero da mesa
+    private String numMesa = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,14 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startVar();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        scomanda = j.getStringExtra("numeroMesa");
-        ;
-        tvncomanda.setText(config.getTitulo_loja() + ": " + scomanda);
-        if (config.getPergunta_mesa() == 1) {
-            snmesa = j.getStringExtra("mesa");
-            tvnmesa.setText("MESA: " + snmesa);
-            tvnmesa.setVisibility(View.VISIBLE);
-        }
+        onNewIntent(getIntent());
 
         if (config.getOperacao_selection() == 1) {
             final float scale = getResources().getDisplayMetrics().density;
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, pm.get(position), badge);
+                ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, pm.get(position), badge, perguntaMesaMode, numComanda);
                 pdcd.setCanceledOnTouchOutside(false);
                 pdcd.setCancelable(false);
                 pdcd.show();
@@ -198,10 +199,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 ProductModel p = atalhos.get(position);
                 String tobs = "";
-                dbl.insertProdCarrinho(p.getId(),p.getName(),1,"",tobs);
+                if (perguntaMesaMode)
+                    dbl.insertProdCarrinho(p.getId(), p.getName(), 1, "", tobs, numComanda);
+                else dbl.insertProdCarrinho(p.getId(), p.getName(), 1, "", tobs, "000000");
                 int b = Integer.parseInt(badge.getText().toString());
                 b++;
-                badge.setText(b+"");
+                badge.setText(b + "");
                 Toast.makeText(MainActivity.this, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
                 return true;
             }
@@ -220,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lv_atalho.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, atalhos.get(position), badge);
+                ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, atalhos.get(position), badge, perguntaMesaMode, numComanda);
                 pdcd.setCanceledOnTouchOutside(false);
                 pdcd.setCancelable(false);
                 pdcd.show();
@@ -231,16 +234,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 ProductModel p = atalhos.get(position);
                 String tobs = "";
-                dbl.insertProdCarrinho(p.getId(),p.getName(),1,"",tobs);
+                if (perguntaMesaMode)
+                    dbl.insertProdCarrinho(p.getId(), p.getName(), 1, "", tobs, numComanda);
+                else dbl.insertProdCarrinho(p.getId(), p.getName(), 1, "", tobs, "000000");
                 int b = Integer.parseInt(badge.getText().toString());
                 b++;
-                badge.setText(b+"");
+                badge.setText(b + "");
                 Toast.makeText(MainActivity.this, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
 
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        scomanda = intent.getStringExtra("numeroMesa");
+
+        perguntaMesaMode = dbl.selectConfig().getPergunta_mesa() == 1;
+
+        if (perguntaMesaMode) {
+            tvncomanda.setText("MESA: " + scomanda);
+            snmesa = intent.getStringExtra("mesa");
+            tvnmesa.setText(dbl.selectConfig().getTitulo_loja() + ": " + snmesa);
+            tvnmesa.setVisibility(View.VISIBLE);
+
+            numComanda = snmesa;
+            numMesa = scomanda;
+        } else {
+            tvncomanda.setText(dbl.selectConfig().getTitulo_loja() + ": " + scomanda);
+
+            numComanda = scomanda;
+        }
+    }
+
 
     private void startVar() {
         dbl = new DBLiteConnection(MainActivity.this);
@@ -370,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             auto_search.setText("");
             if (dbl.foundSelectProdByName(search)) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-                ProductPesqCustomDialog ppcd = new ProductPesqCustomDialog(MainActivity.this, MainActivity.this, badge, search);
+                ProductPesqCustomDialog ppcd = new ProductPesqCustomDialog(MainActivity.this, MainActivity.this, badge, search, perguntaMesaMode, numComanda);
                 ppcd.setCancelable(false);
                 ppcd.setCanceledOnTouchOutside(false);
                 ppcd.show();
@@ -513,7 +542,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     startScan();
                 }
-            }else{
+            } else {
                 startScan();
             }
         }
@@ -530,7 +559,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     prod_cod.setText("");
                     StringCodigo = "";
                     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-                    ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, p, badge);
+                    ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, p, badge, perguntaMesaMode, numComanda);
                     pdcd.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
                     pdcd.setCanceledOnTouchOutside(false);
                     pdcd.setCancelable(false);
@@ -579,17 +608,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         } else {
                             prod_cod.setText("");
                             StringCodigo = "";
-                            if(p.getUnit().equalsIgnoreCase("UN") && p.getFl_imp() == 0){
+                            if (p.getUnit().equalsIgnoreCase("UN") && p.getFl_imp() == 0) {
                                 String tobs = "";
-                                dbl.insertProdCarrinho(p.getId(),p.getName(),1,"",tobs);
+                                if (perguntaMesaMode)
+                                    dbl.insertProdCarrinho(p.getId(), p.getName(), 1, "", tobs, numComanda);
+                                else
+                                    dbl.insertProdCarrinho(p.getId(), p.getName(), 1, "", tobs, "000000");
                                 int b = Integer.parseInt(badge.getText().toString());
                                 b++;
-                                badge.setText(b+"");
+                                badge.setText(b + "");
                                 Toast.makeText(MainActivity.this, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
                                 prod_cod.setText("");
-                            }else {
+                            } else {
                                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-                                ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, p, badge);
+                                ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, p, badge, perguntaMesaMode, numComanda);
                                 pdcd.setCanceledOnTouchOutside(false);
                                 pdcd.setCancelable(false);
                                 pdcd.show();
