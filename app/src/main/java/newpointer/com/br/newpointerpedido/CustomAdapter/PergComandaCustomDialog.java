@@ -106,23 +106,54 @@ public class PergComandaCustomDialog extends Dialog implements View.OnClickListe
             Intent i = new Intent();
             if (mesa_cod.getText().toString().length() > 0) {
 
-                if (openMinhaConta) {
-                    i.setClass(act, MinhaContaActivity.class);
-                    String stringmesa = String.format("%6s", mesa_cod.getText().toString()).replace(' ', '0');
-                    i.putExtra("numeroMesa", stringmesa);
-                    i.putExtra("gerador", dbl.selectConfig().getTitulo_loja());
-                    act.startActivity(i);
-                    dismiss();
+                String stringmesa = String.format("%6s", mesa_cod.getText().toString()).replace(' ', '0');
+
+                if (dbl.selectConfig().getDigito_verificador() == 1) {
+                    int impar = ((Integer.parseInt(stringmesa.substring(4, 5))) + (Integer.parseInt(stringmesa.substring(2, 3))) + (Integer.parseInt(stringmesa.substring(0, 1)))) * 3;
+                    int par = (Integer.parseInt(stringmesa.substring(3, 4))) + (Integer.parseInt(stringmesa.substring(1, 2)));
+                    int soma = par + impar;
+                    String so = "" + soma;
+                    int tam = so.length();
+                    int digito = Integer.parseInt(so.substring(tam - 1));
+                    if (digito != 0) {
+                        digito = digito - 10;
+                    }
+                    digito = digito * (-1);
+                    if (digito != (Integer.parseInt(stringmesa.substring(5, 6)))) {
+                        Toast.makeText(act, "Digito verificador incorreto.", Toast.LENGTH_SHORT).show();
+                        mesa_cod.setText("");
+                    } else {
+
+                        if (openMinhaConta) {
+                            i.setClass(act, MinhaContaActivity.class);
+                            i.putExtra("numeroMesa", stringmesa);
+                            i.putExtra("gerador", dbl.selectConfig().getTitulo_loja());
+                            act.startActivity(i);
+                            dismiss();
+                        } else {
+                            i.setClass(act, MainActivity.class);
+                            i.putExtra("numeroMesa", comanda);
+                            i.putExtra("mesa", stringmesa);
+                            act.startActivity(i);
+                            dismiss();
+                        }
+
+                    }
                 } else {
-                    i.setClass(act, MainActivity.class);
-                    i.putExtra("numeroMesa", comanda);
-                    String stringmesa = String.format("%6s", mesa_cod.getText().toString()).replace(' ', '0');
-                    i.putExtra("mesa", stringmesa);
-                    act.startActivity(i);
-                    dismiss();
+                    if (openMinhaConta) {
+                        i.setClass(act, MinhaContaActivity.class);
+                        i.putExtra("numeroMesa", stringmesa);
+                        i.putExtra("gerador", dbl.selectConfig().getTitulo_loja());
+                        act.startActivity(i);
+                        dismiss();
+                    } else {
+                        i.setClass(act, MainActivity.class);
+                        i.putExtra("numeroMesa", comanda);
+                        i.putExtra("mesa", stringmesa);
+                        act.startActivity(i);
+                        dismiss();
+                    }
                 }
-
-
             } else {
                 Toast.makeText(act, "Digito obrigatório", Toast.LENGTH_SHORT).show();
             }
