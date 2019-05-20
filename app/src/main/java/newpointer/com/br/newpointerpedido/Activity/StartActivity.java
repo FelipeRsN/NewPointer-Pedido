@@ -194,54 +194,52 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                     comanda.setText("");
                     nmesa = "";
                 } else {
-                    if (dbl.selectConfig().getDigito_verificador() == 1) {
-                        String stringComanda = String.format("%6s", ncomanda).replace(' ', '0');
-                        int impar = ((Integer.parseInt(stringComanda.substring(4, 5))) + (Integer.parseInt(stringComanda.substring(2, 3))) + (Integer.parseInt(stringComanda.substring(0, 1)))) * 3;
-                        int par = (Integer.parseInt(stringComanda.substring(3, 4))) + (Integer.parseInt(stringComanda.substring(1, 2)));
-                        int soma = par + impar;
-                        String so = "" + soma;
-                        int tam = so.length();
-                        int digito = Integer.parseInt(so.substring(tam - 1));
-                        if (digito != 0) {
-                            digito = digito - 10;
-                        }
-                        digito = digito * (-1);
-                        if (digito != (Integer.parseInt(stringComanda.substring(5, 6)))) {
-                            Toast.makeText(StartActivity.this, "Digito verificador incorreto.", Toast.LENGTH_SHORT).show();
-                            comanda.setText("");
-                            nmesa = "";
-                        } else {
-                            comanda.setText("");
-                            nmesa = "";
-                            if (config.getPergunta_mesa() == 1) {
 
-                                PergComandaCustomDialog pmcd = new PergComandaCustomDialog(StartActivity.this, StartActivity.this, stringComanda, false);
-                                pmcd.setCancelable(false);
-                                pmcd.setCanceledOnTouchOutside(false);
-                                pmcd.show();
+                    String stringComanda = String.format("%6s", ncomanda).replace(' ', '0');
 
+                    if (config.getPergunta_mesa() == 1) {
+
+                        PergComandaCustomDialog pmcd = new PergComandaCustomDialog(StartActivity.this, StartActivity.this, stringComanda, false);
+                        pmcd.setCancelable(false);
+                        pmcd.setCanceledOnTouchOutside(false);
+                        pmcd.show();
+
+                        comanda.setText("");
+
+                    } else {
+
+                        if (dbl.selectConfig().getDigito_verificador() == 1) {
+                            int impar = ((Integer.parseInt(stringComanda.substring(4, 5))) + (Integer.parseInt(stringComanda.substring(2, 3))) + (Integer.parseInt(stringComanda.substring(0, 1)))) * 3;
+                            int par = (Integer.parseInt(stringComanda.substring(3, 4))) + (Integer.parseInt(stringComanda.substring(1, 2)));
+                            int soma = par + impar;
+                            String so = "" + soma;
+                            int tam = so.length();
+                            int digito = Integer.parseInt(so.substring(tam - 1));
+                            if (digito != 0) {
+                                digito = digito - 10;
+                            }
+                            digito = digito * (-1);
+                            if (digito != (Integer.parseInt(stringComanda.substring(5, 6)))) {
+                                Toast.makeText(StartActivity.this, "Digito verificador incorreto.", Toast.LENGTH_SHORT).show();
+                                comanda.setText("");
+                                nmesa = "";
                             } else {
+                                comanda.setText("");
+                                nmesa = "";
+
                                 i.setClass(StartActivity.this, MainActivity.class);
                                 i.putExtra("numeroMesa", stringComanda);
                                 startActivity(i);
                             }
-                        }
-                    } else {
-                        String stringComanda = String.format("%6s", ncomanda).replace(' ', '0');
-                        comanda.setText("");
-                        nmesa = "";
-                        if (config.getPergunta_mesa() == 1) {
-
-                            PergComandaCustomDialog pmcd = new PergComandaCustomDialog(StartActivity.this, StartActivity.this, stringComanda, false);
-                            pmcd.setCancelable(false);
-                            pmcd.setCanceledOnTouchOutside(false);
-                            pmcd.show();
-
                         } else {
+                            comanda.setText("");
+                            nmesa = "";
+
                             i.setClass(StartActivity.this, MainActivity.class);
                             i.putExtra("numeroMesa", stringComanda);
                             startActivity(i);
                         }
+
                     }
                 }
             }
@@ -254,54 +252,54 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                 if (ncomanda < Integer.parseInt(config.getNmin_mesa()) || ncomanda > Integer.parseInt(config.getNmax_mesa())) {
                     Toast.makeText(StartActivity.this, "Numero da mesa fora do limite", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (dbl.selectConfig().getDigito_verificador() == 1) {
-                        String stringComanda = String.format("%6s", ncomanda).replace(' ', '0');
-                        int impar = ((Integer.parseInt(stringComanda.substring(4, 5))) + (Integer.parseInt(stringComanda.substring(2, 3))) + (Integer.parseInt(stringComanda.substring(0, 1)))) * 3;
-                        int par = (Integer.parseInt(stringComanda.substring(3, 4))) + (Integer.parseInt(stringComanda.substring(1, 2)));
-                        int soma = par + impar;
-                        String so = "" + soma;
-                        int tam = so.length();
-                        int digito = Integer.parseInt(so.substring(tam - 1));
-                        if (digito != 0) {
-                            digito = digito - 10;
-                        }
-                        digito = digito * (-1);
-                        if (digito != (Integer.parseInt(stringComanda.substring(5, 6)))) {
-                            Toast.makeText(StartActivity.this, "Digito verificador incorreto.", Toast.LENGTH_SHORT).show();
-                            comanda.setText("");
-                            nmesa = "";
-                        } else {
-                            comanda.setText("");
-                            nmesa = "";
 
-                            if (config.getPergunta_mesa() == 1) {
-                                PergComandaCustomDialog pmcd = new PergComandaCustomDialog(StartActivity.this, StartActivity.this, stringComanda, true);
-                                pmcd.setCancelable(false);
-                                pmcd.setCanceledOnTouchOutside(false);
-                                pmcd.show();
-                            }else{
+                    String stringComanda = String.format("%6s", ncomanda).replace(' ', '0');
+
+                    if (config.getPergunta_mesa() == 1) {
+
+                        PergComandaCustomDialog pmcd = new PergComandaCustomDialog(StartActivity.this, StartActivity.this, stringComanda, true);
+                        pmcd.setCancelable(false);
+                        pmcd.setCanceledOnTouchOutside(false);
+                        pmcd.show();
+
+                        comanda.setText("");
+
+                    } else {
+
+                        if (dbl.selectConfig().getDigito_verificador() == 1) {
+                            int impar = ((Integer.parseInt(stringComanda.substring(4, 5))) + (Integer.parseInt(stringComanda.substring(2, 3))) + (Integer.parseInt(stringComanda.substring(0, 1)))) * 3;
+                            int par = (Integer.parseInt(stringComanda.substring(3, 4))) + (Integer.parseInt(stringComanda.substring(1, 2)));
+                            int soma = par + impar;
+                            String so = "" + soma;
+                            int tam = so.length();
+                            int digito = Integer.parseInt(so.substring(tam - 1));
+                            if (digito != 0) {
+                                digito = digito - 10;
+                            }
+                            digito = digito * (-1);
+                            if (digito != (Integer.parseInt(stringComanda.substring(5, 6)))) {
+                                Toast.makeText(StartActivity.this, "Digito verificador incorreto.", Toast.LENGTH_SHORT).show();
+                                comanda.setText("");
+                                nmesa = "";
+                            } else {
+                                comanda.setText("");
+                                nmesa = "";
+
                                 i.setClass(StartActivity.this, MinhaContaActivity.class);
                                 i.putExtra("numeroMesa", stringComanda);
                                 i.putExtra("gerador", dbl.selectConfig().getTitulo_loja());
                                 startActivity(i);
                             }
-                        }
-                    } else {
-                        String stringComanda = String.format("%6s", ncomanda).replace(' ', '0');
-                        comanda.setText("");
-                        nmesa = "";
+                        } else {
+                            comanda.setText("");
+                            nmesa = "";
 
-                        if (config.getPergunta_mesa() == 1) {
-                            PergComandaCustomDialog pmcd = new PergComandaCustomDialog(StartActivity.this, StartActivity.this, stringComanda, true);
-                            pmcd.setCancelable(false);
-                            pmcd.setCanceledOnTouchOutside(false);
-                            pmcd.show();
-                        }else{
                             i.setClass(StartActivity.this, MinhaContaActivity.class);
                             i.putExtra("numeroMesa", stringComanda);
                             i.putExtra("gerador", dbl.selectConfig().getTitulo_loja());
                             startActivity(i);
                         }
+
                     }
                 }
             }
