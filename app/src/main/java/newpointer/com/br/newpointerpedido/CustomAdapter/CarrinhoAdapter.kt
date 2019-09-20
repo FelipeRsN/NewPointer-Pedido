@@ -34,7 +34,7 @@ class CarrinhoAdapter(private val context: Context, private val activity: Activi
 
             this.notifyItemRemoved(viewHolder.adapterPosition)
 
-            if (item.firstItem) {
+            if (item.firstItem != null && item.firstItem) {
                 run outForeach@{
                     listCars.forEachIndexed { index, carrinhoModel ->
                         if (carrinhoModel.id_carrinho != item.id_carrinho && carrinhoModel.numComanda == item.numComanda) {
