@@ -8,8 +8,9 @@ public class GroupAcomp_ListView_Model {
     private String desc;
     private int selecao;
     private int mode;
+    private boolean isSelected;
 
-    public GroupAcomp_ListView_Model(int id, String desc, int selecao, int mode){
+    public GroupAcomp_ListView_Model(int id, String desc, int selecao, int mode, boolean isSelected){
         this.id = id;
         this.desc = desc;
         this.selecao = selecao;
@@ -46,6 +47,14 @@ public class GroupAcomp_ListView_Model {
 
     public void setMode(int mode) {
         this.mode = mode;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }
 

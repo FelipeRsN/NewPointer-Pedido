@@ -9,8 +9,8 @@ android {
         applicationId "newpointer.com.br.newpointerpedido"
         minSdkVersion 14
         targetSdkVersion 28
-        versionCode 41
-        versionName "4.01"
+        versionCode 42
+        versionName "4.02"
         multiDexEnabled true
     }
     buildTypes {

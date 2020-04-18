@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: com.edwardvanraak:MaterialBarcodeScanner:0.0.6-ALPHA@aar">
     <ANNOTATIONS>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/e0d24f95e82b135746c459f84f43ce58/annotations.zip!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/3a3ad2419fe13e6ba22f5027b2635f7c/annotations.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/e0d24f95e82b135746c459f84f43ce58/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/e0d24f95e82b135746c459f84f43ce58/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/3a3ad2419fe13e6ba22f5027b2635f7c/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/3a3ad2419fe13e6ba22f5027b2635f7c/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

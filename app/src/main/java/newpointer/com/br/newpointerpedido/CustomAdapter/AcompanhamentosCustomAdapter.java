@@ -32,6 +32,11 @@ public class AcompanhamentosCustomAdapter extends BaseAdapter {
         this.context = context;
     }
 
+    public void setSelectedItem(int position, boolean isSelected){
+        listCars.get(position).setSelected(isSelected);
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return listCars.size();
@@ -81,6 +86,7 @@ public class AcompanhamentosCustomAdapter extends BaseAdapter {
             holder.cb.setVisibility(View.VISIBLE);
             holder.cb.setText(item.getDesc());
             holder.rb.setVisibility(View.INVISIBLE);
+            holder.cb.setChecked(item.isSelected());
         }
         return view;
     }

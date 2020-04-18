@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="V 4.1"
+            android:text="V 4.2"
             android:textSize="12sp"
             android:textColor="@color/colorWhite"
             android:padding="10dp"/>
@@ -673,7 +673,7 @@
 
         <TextView
             android:id="@+id/tv_loading_powered"
-            android:text="2019 - Powered by NewPointer"
+            android:text="2020 - Powered by NewPointer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimaryDark"
