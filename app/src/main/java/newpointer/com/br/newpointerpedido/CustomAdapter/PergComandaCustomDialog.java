@@ -12,8 +12,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 import newpointer.com.br.newpointerpedido.Activity.MainActivity;
 import newpointer.com.br.newpointerpedido.Activity.MinhaContaActivity;
+import newpointer.com.br.newpointerpedido.Activity.listeners.PergComandaListener;
 import newpointer.com.br.newpointerpedido.Connection.DBLiteConnection;
 import newpointer.com.br.newpointerpedido.R;
 
@@ -23,6 +26,7 @@ import newpointer.com.br.newpointerpedido.R;
 public class PergComandaCustomDialog extends Dialog implements View.OnClickListener {
     private Activity act;
     private Context ctx;
+    private PergComandaListener listener;
     private Button bt_0;
     private Button bt_1;
     private Button bt_2;
@@ -34,6 +38,7 @@ public class PergComandaCustomDialog extends Dialog implements View.OnClickListe
     private Button bt_8;
     private Button bt_9;
     private ImageButton bt_back;
+    private ImageButton bt_scan;
     private ImageButton bt_ok;
     private TextView mesa_cod;
     private String stringcodigo = "";
@@ -44,11 +49,13 @@ public class PergComandaCustomDialog extends Dialog implements View.OnClickListe
     private DBLiteConnection dbl;
     private boolean openMinhaConta = false;
 
-    public PergComandaCustomDialog(Context context, Activity act, String comanda, Boolean openMinhaConta) {
+    public PergComandaCustomDialog(Context context, Activity act, String mesa, Boolean openMinhaConta, String comanda, PergComandaListener listener) {
         super(context);
         this.ctx = context;
         this.act = act;
-        this.comanda = comanda;
+        this.listener = listener;
+        this.comanda = mesa;
+        this.stringcodigo = comanda;
         this.openMinhaConta = openMinhaConta;
     }
 
@@ -57,11 +64,7 @@ public class PergComandaCustomDialog extends Dialog implements View.OnClickListe
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_perguntamesa);
-
         startVar();
-
-        cd_comanda.setText("MESA: " + comanda);
-
     }
 
     private void startVar() {
@@ -76,9 +79,10 @@ public class PergComandaCustomDialog extends Dialog implements View.OnClickListe
         bt_7 = (Button) findViewById(R.id.bt_pergmesa_7);
         bt_8 = (Button) findViewById(R.id.bt_pergmesa_8);
         bt_9 = (Button) findViewById(R.id.bt_pergmesa_9);
-        comandaLabel = findViewById(R.id.tv_pergmesa_noperador);
+        comandaLabel = (TextView) findViewById(R.id.tv_pergmesa_noperador);
         bt_back = (ImageButton) findViewById(R.id.ib_pergmesa_backspace);
         bt_ok = (ImageButton) findViewById(R.id.ib_pergmesa_ok);
+        bt_scan = (ImageButton) findViewById(R.id.bt_scan);
         mesa_cod = (TextView) findViewById(R.id.tv_pergmesa_codigo);
         close = (Button) findViewById(R.id.bt_pergmesa_close);
         cd_comanda = (TextView) findViewById(R.id.tv_pergmesa_comanda);
@@ -98,6 +102,15 @@ public class PergComandaCustomDialog extends Dialog implements View.OnClickListe
         bt_back.setOnClickListener(this);
         bt_ok.setOnClickListener(this);
         close.setOnClickListener(this);
+        bt_scan.setOnClickListener(this);
+
+        cd_comanda.setText("MESA: " + this.comanda);
+
+        if (!this.stringcodigo.isEmpty()) {
+            mesa_cod.setText(this.stringcodigo);
+        }else{
+            mesa_cod.setText("");
+        }
     }
 
     @Override
@@ -215,6 +228,10 @@ public class PergComandaCustomDialog extends Dialog implements View.OnClickListe
             mesa_cod.setText(stringcodigo);
         }
         if (view == close) {
+            dismiss();
+        }
+        if (view == bt_scan) {
+            listener.onOpenScanClicked();
             dismiss();
         }
     }

@@ -8,10 +8,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,9 +23,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.edwardvanraak.materialbarcodescanner.MaterialBarcodeScanner;
-import com.edwardvanraak.materialbarcodescanner.MaterialBarcodeScannerBuilder;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.google.android.gms.vision.barcode.Barcode;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 import com.readystatesoftware.viewbadger.BadgeView;
 
 import java.util.ArrayList;
@@ -94,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String snmesa;
     private ImageView scanner_click;
     public static Activity fa;
-    private Barcode barcodeResult;
 
     private Boolean perguntaMesaMode = false;
 
@@ -530,7 +531,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             .setPositiveButton("Permitir", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, MaterialBarcodeScanner.RC_HANDLE_CAMERA_PERM);
+                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 66678);
                                 }
                             })
                             .setNegativeButton("Agora não", new DialogInterface.OnClickListener() {
@@ -581,61 +582,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void startScan() {
-        /**
-         * Build a new MaterialBarcodeScanner
-         */
-        final MaterialBarcodeScanner materialBarcodeScanner = new MaterialBarcodeScannerBuilder()
-                .withActivity(MainActivity.this)
-                .withEnableAutoFocus(true)
-                .withBleepEnabled(true)
-                .withBackfacingCamera()
-                .withCenterTracker()
-                .withTrackerColor(Color.WHITE)
-                .withText("Procurando código de barras...")
-                .withResultListener(new MaterialBarcodeScanner.OnResultListener() {
-                    @Override
-                    public void onResult(Barcode barcode) {
-                        barcodeResult = barcode;
-                        prod_cod.setText(barcode.rawValue);
-                        String cod_digitado = String.format("%14s", prod_cod.getText().toString()).replace(' ', '0');
-                        Log.i("SEARCH", cod_digitado);
-                        ProductModel p = dbl.getProdByAssociadoAndCode(cod_digitado);
-                        if (p.getName().equalsIgnoreCase("")) {
-                            Toast.makeText(MainActivity.this, "Produto não encontrado", Toast.LENGTH_SHORT).show();
+    private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),
+            result -> {
+                if (result.getContents() == null) {
+                    Toast.makeText(this, "Nenhum produto reconhecido.", Toast.LENGTH_LONG).show();
+                } else {
+                    String barcodeResult = result.getContents();
+                    prod_cod.setText(barcodeResult);
+                    String cod_digitado = String.format("%14s", prod_cod.getText().toString()).replace(' ', '0');
+                    Log.i("SEARCH", cod_digitado);
+                    ProductModel p = dbl.getProdByAssociadoAndCode(cod_digitado);
+                    if (p.getName().equalsIgnoreCase("")) {
+                        Toast.makeText(MainActivity.this, "Produto não encontrado", Toast.LENGTH_SHORT).show();
+                        prod_cod.setText("");
+                        StringCodigo = "";
+                    } else {
+                        prod_cod.setText("");
+                        StringCodigo = "";
+                        if (p.getUnit().equalsIgnoreCase("UN") && p.getFl_imp() == 0) {
+                            String tobs = "";
+                            if (perguntaMesaMode)
+                                dbl.insertProdCarrinho(p.getId(), p.getName(), 1, "", tobs, numComanda);
+                            else
+                                dbl.insertProdCarrinho(p.getId(), p.getName(), 1, "", tobs, "000000");
+                            int b = Integer.parseInt(badge.getText().toString());
+                            b++;
+                            badge.setText(b + "");
+                            Toast.makeText(MainActivity.this, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
                             prod_cod.setText("");
-                            StringCodigo = "";
                         } else {
-                            prod_cod.setText("");
-                            StringCodigo = "";
-                            if (p.getUnit().equalsIgnoreCase("UN") && p.getFl_imp() == 0) {
-                                String tobs = "";
-                                if (perguntaMesaMode)
-                                    dbl.insertProdCarrinho(p.getId(), p.getName(), 1, "", tobs, numComanda);
-                                else
-                                    dbl.insertProdCarrinho(p.getId(), p.getName(), 1, "", tobs, "000000");
-                                int b = Integer.parseInt(badge.getText().toString());
-                                b++;
-                                badge.setText(b + "");
-                                Toast.makeText(MainActivity.this, "Produto adicionado ao carrinho", Toast.LENGTH_SHORT).show();
-                                prod_cod.setText("");
-                            } else {
-                                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-                                ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, p, badge, perguntaMesaMode, numComanda);
-                                pdcd.setCanceledOnTouchOutside(false);
-                                pdcd.setCancelable(false);
-                                pdcd.show();
-                            }
+                            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+                            ProductDetailCustomDialog pdcd = new ProductDetailCustomDialog(MainActivity.this, MainActivity.this, p, badge, perguntaMesaMode, numComanda);
+                            pdcd.setCanceledOnTouchOutside(false);
+                            pdcd.setCancelable(false);
+                            pdcd.show();
                         }
                     }
-                })
-                .build();
-        materialBarcodeScanner.startScan();
+                }
+            });
+
+
+    private void startScan() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Aponte a camera para o código de barras do produto:");
+        options.setBarcodeImageEnabled(true);
+        barcodeLauncher.launch(options);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode != MaterialBarcodeScanner.RC_HANDLE_CAMERA_PERM) {
+        if (requestCode != 66678) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             return;
         }
@@ -650,7 +646,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         };
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Error")
-                .setMessage(R.string.no_camera_permission)
+                .setMessage("É necessáro dar permissão de camera para acessar este recurso.")
                 .setPositiveButton(android.R.string.ok, listener)
                 .show();
     }

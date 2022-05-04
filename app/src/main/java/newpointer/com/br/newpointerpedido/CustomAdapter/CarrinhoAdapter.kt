@@ -2,7 +2,7 @@ package newpointer.com.br.newpointerpedido.CustomAdapter
 
 import android.app.Activity
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -116,7 +116,7 @@ class CarrinhoAdapter(private val context: Context, private val activity: Activi
     }
 }
 
-class CarrinhoViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+class CarrinhoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     val nome by lazy { itemView?.findViewById<TextView>(R.id.tv_carrinho_nome) }
     val cod by lazy { itemView?.findViewById<TextView>(R.id.tv_carrinho_codigo) }

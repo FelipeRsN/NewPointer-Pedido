@@ -59,7 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_dialogprod_minus"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="5dp"
@@ -69,7 +69,7 @@
                 android:src="@drawable/minus"
                 android:layout_marginTop="20dp"/>
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_dialogprod_plus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -141,7 +141,7 @@
                 android:layout_marginRight="20dp"
                 android:background="#e0035c8c"/>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_dialogprod_obs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -161,7 +161,7 @@
                     android:nextFocusUp="@id/et_dialogprod_obs"
                     android:nextFocusLeft="@id/et_dialogprod_obs"/>
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/bt_dialogprod_add"

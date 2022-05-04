@@ -1,16 +1,15 @@
 package newpointer.com.br.newpointerpedido.Activity;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +18,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 import com.readystatesoftware.viewbadger.BadgeView;
 
 import java.sql.Connection;
@@ -30,14 +40,15 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Properties;
 
+import newpointer.com.br.newpointerpedido.Activity.listeners.PergComandaListener;
 import newpointer.com.br.newpointerpedido.Connection.DBLiteConnection;
 import newpointer.com.br.newpointerpedido.CustomAdapter.CarrinhoAdapter;
 import newpointer.com.br.newpointerpedido.CustomAdapter.PergComandaCustomDialog;
 import newpointer.com.br.newpointerpedido.Model.CarrinhoModel;
 import newpointer.com.br.newpointerpedido.R;
 
-public class CarinhoActivity extends AppCompatActivity implements View.OnClickListener {
-
+@SuppressLint("SetTextI18n")
+public class CarinhoActivity extends AppCompatActivity implements View.OnClickListener, PergComandaListener {
     private ImageButton back;
     private ImageButton clear;
     private FloatingActionButton send;
@@ -65,6 +76,11 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
     private String procedure_mesa = "";
     private String procedure_valorindice = "";
     private String procedure_tpestacao = "1";
+
+    private PergComandaCustomDialog pccd;
+    private Boolean needOpenDialogAgain = false;
+    private Boolean openMinhaConta = false;
+    private String typedComanda = "";
 
     private boolean contaAberta = false;
     private boolean hasResult = false;
@@ -169,15 +185,17 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         if (v == newComanda) {
-            PergComandaCustomDialog pmcd = new PergComandaCustomDialog(this, this, numMesa, false);
-            pmcd.setCancelable(false);
-            pmcd.setCanceledOnTouchOutside(false);
-            pmcd.show();
+            typedComanda = numMesa;
+            openMinhaConta = false;
+            pccd = new PergComandaCustomDialog(this, this, typedComanda, openMinhaConta, "", this);
+            pccd.setCancelable(false);
+            pccd.setCanceledOnTouchOutside(false);
+            pccd.show();
         }
     }
 
     private void enviarProdutos() {
-        if(pd != null) {
+        if (pd != null) {
             pd.setMessage("Testando conexão e enviando produtos... 15");
             pd.setCancelable(false);
             pd.setCanceledOnTouchOutside(false);
@@ -188,14 +206,15 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onTick(long millisUntilFinished) {
-                if(pd != null) pd.setMessage("Testando conexão e enviando produtos... " + millisUntilFinished / 1000);
+                if (pd != null)
+                    pd.setMessage("Testando conexão e enviando produtos... " + millisUntilFinished / 1000);
             }
 
             @Override
             public void onFinish() {
                 if (!hasResult) {
                     if (!sqlResponse) {
-                        if(pd != null) pd.hide();
+                        if (pd != null) pd.hide();
                         AlertDialog.Builder builder = new AlertDialog.Builder(CarinhoActivity.this, R.style.YourDialogStyle);
                         builder.setTitle("Problema ao enviar produtos");
                         builder.setMessage("Ocorreu um problema ao tentar enviar os produtos para o servidor e o tempo se esgotou, verifique sua conexão com a internet e clique em tentar novamente.");
@@ -212,6 +231,93 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
         }.start();
+    }
+
+    void checkPermissionAndStartScan() {
+        int MyVersion = Build.VERSION.SDK_INT;
+        if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (ActivityCompat.checkSelfPermission(CarinhoActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                AlertDialog dialog = new AlertDialog.Builder(this)
+                        .setTitle("Permissão de acesso")
+                        .setMessage("Para usar a camera do dispositivo, é necessário permissão de acesso. Aperte em Permitir para continuar.")
+                        .setPositiveButton("Permitir", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ActivityCompat.requestPermissions(CarinhoActivity.this, new String[]{Manifest.permission.CAMERA}, 66678);
+                            }
+                        })
+                        .setNegativeButton("Agora não", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(CarinhoActivity.this, "Não é possivel escanerar comanda sem permissão de camera", Toast.LENGTH_LONG).show();
+                            }
+                        }).show();
+            } else {
+                startScan();
+            }
+        } else {
+            startScan();
+        }
+    }
+
+
+    private void startScan() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Aponte a camera para o código de barras ou QR Code da comanda:");
+        options.setBarcodeImageEnabled(true);
+        barcodeLauncher.launch(options);
+    }
+
+    private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),
+            result -> {
+                if (result.getContents() == null) {
+                    Toast.makeText(this, "Comanda não reconhecida.", Toast.LENGTH_LONG).show();
+                    if (needOpenDialogAgain) {
+                        needOpenDialogAgain = false;
+                        pccd = new PergComandaCustomDialog(this, this, typedComanda, openMinhaConta, "", this);
+                        pccd.setCancelable(false);
+                        pccd.setCanceledOnTouchOutside(false);
+                        pccd.show();
+                    }
+                } else {
+                    String barcodeResult = result.getContents();
+                    if (needOpenDialogAgain) {
+                        needOpenDialogAgain = false;
+                        pccd = new PergComandaCustomDialog(this, this, typedComanda, openMinhaConta, barcodeResult, this);
+                        pccd.setCancelable(false);
+                        pccd.setCanceledOnTouchOutside(false);
+                        pccd.show();
+                    }
+                }
+            });
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode != 66678) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            return;
+        }
+        if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startScan();
+            return;
+        }
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        };
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Error")
+                .setMessage("É necessáro dar permissão de camera para acessar este recurso.")
+                .setPositiveButton(android.R.string.ok, listener)
+                .show();
+    }
+
+    @Override
+    public void onOpenScanClicked() {
+        needOpenDialogAgain = true;
+        checkPermissionAndStartScan();
     }
 
     public class EnviaProdutos extends AsyncTask<String, Object, Integer> {

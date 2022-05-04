@@ -163,12 +163,14 @@
                 android:layout_weight="1">
 
                 <ImageButton
+                    android:id="@+id/bt_scan"
                     android:layout_width="55dp"
                     android:layout_height="55dp"
+                    android:background="@drawable/button_confirm_state"
                     android:elevation="4dp"
+                    android:src="@drawable/barcode_scan"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:visibility="invisible"/>
+                    android:layout_centerVertical="true" />
 
             </RelativeLayout>
 

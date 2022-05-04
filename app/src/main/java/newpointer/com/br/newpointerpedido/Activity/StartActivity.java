@@ -1,8 +1,12 @@
 package newpointer.com.br.newpointerpedido.Activity;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -10,13 +14,24 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
+
+import newpointer.com.br.newpointerpedido.Activity.listeners.PergComandaListener;
 import newpointer.com.br.newpointerpedido.Connection.DBLiteConnection;
 import newpointer.com.br.newpointerpedido.CustomAdapter.OperadorCustomDialog;
 import newpointer.com.br.newpointerpedido.CustomAdapter.PergComandaCustomDialog;
 import newpointer.com.br.newpointerpedido.Model.ConfigModel;
 import newpointer.com.br.newpointerpedido.R;
 
-public class StartActivity extends AppCompatActivity implements View.OnClickListener {
+@SuppressLint("SetTextI18n")
+public class StartActivity extends AppCompatActivity implements View.OnClickListener, PergComandaListener {
     private Button bt_0;
     private Button bt_1;
     private Button bt_2;
@@ -28,6 +43,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     private Button bt_8;
     private Button bt_9;
     private ImageButton bt_back;
+    private ImageButton bt_start_scan;
     private Button configuration;
     private Button my_account;
     private Button make_order;
@@ -37,6 +53,11 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     private DBLiteConnection dbl;
     private ConfigModel config;
     private Intent i;
+    private PergComandaCustomDialog pccd;
+
+    private Boolean needOpenDialogAgain = false;
+    private Boolean openMinhaConta = false;
+    private String typedComanda = "";
 
 
     @Override
@@ -69,6 +90,8 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
             bt_8.getLayoutParams().height = pixels;
             bt_9.getLayoutParams().width = pixels;
             bt_9.getLayoutParams().height = pixels;
+            bt_start_scan.getLayoutParams().width = pixels;
+            bt_start_scan.getLayoutParams().height = pixels;
             int font = (int) (40 * scale + 0.5f);
             bt_0.setTextSize(font);
             bt_1.setTextSize(font);
@@ -95,6 +118,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         bt_7 = (Button) findViewById(R.id.bt_start_7);
         bt_8 = (Button) findViewById(R.id.bt_start_8);
         bt_9 = (Button) findViewById(R.id.bt_start_9);
+        bt_start_scan = (ImageButton) findViewById(R.id.bt_start_scan);
         bt_back = (ImageButton) findViewById(R.id.ib_start_backspace);
         my_account = (Button) findViewById(R.id.bt_start_conta);
         make_order = (Button) findViewById(R.id.bt_start_pedido);
@@ -118,12 +142,15 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         my_account.setOnClickListener(this);
         make_order.setOnClickListener(this);
         configuration.setOnClickListener(this);
+        bt_start_scan.setOnClickListener(this);
 
         config = dbl.selectConfig();
         if (config.getPergunta_mesa() == 1) {
             titulo.setText("MESA");
+            bt_start_scan.setVisibility(View.INVISIBLE);
         } else {
             titulo.setText(config.getTitulo_loja());
+            bt_start_scan.setVisibility(View.VISIBLE);
         }
     }
 
@@ -198,12 +225,13 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                     String stringComanda = String.format("%6s", ncomanda).replace(' ', '0');
 
                     if (config.getPergunta_mesa() == 1) {
+                        openMinhaConta = false;
+                        typedComanda = stringComanda;
 
-                        PergComandaCustomDialog pmcd = new PergComandaCustomDialog(StartActivity.this, StartActivity.this, stringComanda, false);
-                        pmcd.setCancelable(false);
-                        pmcd.setCanceledOnTouchOutside(false);
-                        pmcd.show();
-
+                        pccd = new PergComandaCustomDialog(this, this, typedComanda, openMinhaConta, "", this);
+                        pccd.setCancelable(false);
+                        pccd.setCanceledOnTouchOutside(false);
+                        pccd.show();
                         comanda.setText("");
 
                     } else {
@@ -256,12 +284,12 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                     String stringComanda = String.format("%6s", ncomanda).replace(' ', '0');
 
                     if (config.getPergunta_mesa() == 1) {
-
-                        PergComandaCustomDialog pmcd = new PergComandaCustomDialog(StartActivity.this, StartActivity.this, stringComanda, true);
-                        pmcd.setCancelable(false);
-                        pmcd.setCanceledOnTouchOutside(false);
-                        pmcd.show();
-
+                        openMinhaConta = true;
+                        typedComanda = stringComanda;
+                        pccd = new PergComandaCustomDialog(this, this, typedComanda, openMinhaConta, "", this);
+                        pccd.setCancelable(false);
+                        pccd.setCanceledOnTouchOutside(false);
+                        pccd.show();
                         comanda.setText("");
 
                     } else {
@@ -311,7 +339,98 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
             ocd.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             ocd.show();
         }
+        if (view == bt_start_scan) {
+            checkPermissionAndStartScan();
+        }
+    }
+
+    void checkPermissionAndStartScan() {
+        int MyVersion = Build.VERSION.SDK_INT;
+        if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (ActivityCompat.checkSelfPermission(StartActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                AlertDialog dialog = new AlertDialog.Builder(this)
+                        .setTitle("Permissão de acesso")
+                        .setMessage("Para usar a camera do dispositivo, é necessário permissão de acesso. Aperte em Permitir para continuar.")
+                        .setPositiveButton("Permitir", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ActivityCompat.requestPermissions(StartActivity.this, new String[]{Manifest.permission.CAMERA}, 66678);
+                            }
+                        })
+                        .setNegativeButton("Agora não", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(StartActivity.this, "Não é possivel escanerar comanda sem permissão de camera", Toast.LENGTH_LONG).show();
+                            }
+                        }).show();
+            } else {
+                startScan();
+            }
+        } else {
+            startScan();
+        }
+    }
 
 
+    private void startScan() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Aponte a camera para o código de barras ou QR Code da comanda:");
+        options.setBarcodeImageEnabled(true);
+        barcodeLauncher.launch(options);
+    }
+
+    private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),
+            result -> {
+                if (result.getContents() == null) {
+                    Toast.makeText(this, "Comanda não reconhecida.", Toast.LENGTH_LONG).show();
+                    if (needOpenDialogAgain) {
+                        needOpenDialogAgain = false;
+                        pccd = new PergComandaCustomDialog(this, this, typedComanda, openMinhaConta, "", this);
+                        pccd.setCancelable(false);
+                        pccd.setCanceledOnTouchOutside(false);
+                        pccd.show();
+                    }
+                } else {
+                    String barcodeResult = result.getContents();
+                    if (needOpenDialogAgain) {
+                        needOpenDialogAgain = false;
+                        pccd = new PergComandaCustomDialog(this, this, typedComanda, openMinhaConta, barcodeResult, this);
+                        pccd.setCancelable(false);
+                        pccd.setCanceledOnTouchOutside(false);
+                        pccd.show();
+                    } else {
+                        nmesa = barcodeResult;
+                        comanda.setText(nmesa);
+                    }
+                }
+            });
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode != 66678) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            return;
+        }
+        if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startScan();
+            return;
+        }
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        };
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Error")
+                .setMessage("É necessáro dar permissão de camera para acessar este recurso.")
+                .setPositiveButton(android.R.string.ok, listener)
+                .show();
+    }
+
+    @Override
+    public void onOpenScanClicked() {
+        needOpenDialogAgain = true;
+        checkPermissionAndStartScan();
     }
 }
