@@ -265,6 +265,7 @@ public class CarinhoActivity extends AppCompatActivity implements View.OnClickLi
         ScanOptions options = new ScanOptions();
         options.setPrompt("Aponte a camera para o código de barras ou QR Code da comanda:");
         options.setBarcodeImageEnabled(true);
+        options.setOrientationLocked(false);
         barcodeLauncher.launch(options);
     }
 

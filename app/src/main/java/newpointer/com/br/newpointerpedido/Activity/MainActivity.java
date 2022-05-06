@@ -626,6 +626,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ScanOptions options = new ScanOptions();
         options.setPrompt("Aponte a camera para o código de barras do produto:");
         options.setBarcodeImageEnabled(true);
+        options.setOrientationLocked(false);
         barcodeLauncher.launch(options);
     }
 
